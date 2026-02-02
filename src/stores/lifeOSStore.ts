@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { useUIStore } from './uiStore';
 import { indexedDBStorage } from '@/lib/db';
-import { generateId, getCurrentTimestamp, formatDate, getWeekStart, getWeekEnd, getNextOccurrence } from '@/lib/utils';
+import { generateId, getCurrentTimestamp, formatDate, getToday, getWeekStart, getWeekEnd, getNextOccurrence } from '@/lib/utils';
 import type {
     Goal,
     Task,
@@ -17,13 +17,20 @@ import type {
     WeekSummary,
     DailyLog,
     MediaItem,
+    Note,
+    Transaction,
+    Budget,
     Tag,
     Project,
     MonthlyReflection,
     YearlyReflection,
     AchievementId,
+    SkillType,
+    Challenge,
+    Interaction,
+    Contact,
 } from '@/types';
-import { ACHIEVEMENTS } from '@/types';
+import { ACHIEVEMENTS, SHOP_ITEMS } from '@/types';
 
 // ─── State Interface ─────────────────────────────────────────────────────────
 
@@ -40,7 +47,11 @@ interface LifeOSState {
     yearlyReflections: YearlyReflection[];
     dailyLogs: DailyLog[];
     mediaItems: MediaItem[];
+    notes: Note[];
+    transactions: Transaction[];
+    budgets: Budget[];
     tags: Tag[];
+    contacts: Contact[];
 
     // Preferences
     preferences: UserPreferences;
@@ -90,6 +101,17 @@ interface LifeOSActions {
     addMediaItem: (item: Omit<MediaItem, 'id' | 'createdAt' | 'updatedAt' | '_version'>) => string;
     updateMediaItem: (id: string, updates: Partial<MediaItem>) => void;
     deleteMediaItem: (id: string) => void;
+
+    // Wiki / Notes
+    addNote: (note: Omit<Note, 'id' | 'createdAt' | 'updatedAt' | '_version' | 'tagIds'> & { tagIds?: string[] }) => string;
+    updateNote: (id: string, updates: Partial<Note>) => void;
+    deleteNote: (id: string) => void;
+
+    // Finance
+    addTransaction: (transaction: Omit<Transaction, 'id' | 'createdAt' | 'updatedAt' | '_version'>) => string;
+    deleteTransaction: (id: string) => void;
+    updateBudget: (budget: Budget) => void;
+
     moveTaskToDate: (id: string, date: string | null) => void;
     reorderTasks: (taskIds: string[]) => void;
 
@@ -109,6 +131,13 @@ interface LifeOSActions {
 
     // Daily Journal
     saveDailyLog: (log: Omit<DailyLog, 'id' | 'createdAt' | 'updatedAt' | '_version'>) => void;
+    updateWaterIntake: (date: string, amount: number) => void;
+
+    // Personal CRM (Contacts)
+    addContact: (contact: Omit<Contact, 'id' | 'createdAt' | 'updatedAt' | '_version' | 'interactions' | 'lastContacted'>) => string;
+    updateContact: (id: string, updates: Partial<Contact>) => void;
+    deleteContact: (id: string) => void;
+    addInteraction: (contactId: string, interaction: Omit<Interaction, 'id'>) => void;
 
     // Tags
     addTag: (tag: Omit<Tag, 'id'>) => string;
@@ -124,6 +153,15 @@ interface LifeOSActions {
     isLocked: boolean;
     unlockApp: () => void;
     lockApp: () => void;
+
+    // Gamification
+    refreshMasterStreak: () => void;
+    buyStreakFreeze: () => { success: boolean; error?: string };
+    addXP: (amount: number, skillId?: SkillType) => void;
+    buyItem: (itemId: string) => { success: boolean; error?: string };
+    equipItem: (itemId: string, category: keyof UserPreferences['equippedItems']) => void;
+    startChallenge: (challenge: Challenge) => void;
+    updateChallengeProgress: (type: Challenge['type'], amount: number) => void;
 
     // Data Management
     exportAllData: () => string;
@@ -166,23 +204,34 @@ const defaultPreferences: UserPreferences = {
     dashboard: {
         widgets: [
             { id: 'smart_briefing', enabled: true, order: 0 },
-            { id: 'streak_widget', enabled: true, order: 1 },
-            { id: 'character_card', enabled: true, order: 2 },
-            { id: 'focus_cockpit', enabled: true, order: 3 },
-            { id: 'energy_checkin', enabled: true, order: 4 },
-            { id: 'daily_reflection', enabled: true, order: 4 },
-            { id: 'today_tasks', enabled: true, order: 5 },
-            { id: 'inbox', enabled: true, order: 6 },
-            { id: 'habits', enabled: true, order: 7 },
+            { id: 'smart_insight_widget', enabled: true, order: 1 },
+            { id: 'streak_widget', enabled: true, order: 2 },
+            { id: 'character_card', enabled: true, order: 3 },
+            { id: 'focus_cockpit', enabled: true, order: 4 },
+            { id: 'energy_checkin', enabled: true, order: 5 },
+            { id: 'daily_reflection', enabled: true, order: 5 },
+            { id: 'finance_widget', enabled: true, order: 6 },
+            { id: 'today_tasks', enabled: true, order: 7 },
+            { id: 'inbox', enabled: true, order: 8 },
+            { id: 'habits', enabled: true, order: 9 },
         ]
     },
     lastSentNotifications: {},
     unlockedAchievements: [],
+    masterStreak: {
+        current: 0,
+        best: 0,
+        lastUpdate: null,
+    },
+    streakFreezes: 1,
     security: {
         enabled: false,
         pin: null,
         lockAfterMinutes: 0
     },
+    inventory: [],
+    equippedItems: {},
+    activeChallenges: [],
 };
 
 const initialState: LifeOSState = {
@@ -198,12 +247,16 @@ const initialState: LifeOSState = {
     yearlyReflections: [],
     dailyLogs: [],
     mediaItems: [],
+    notes: [],
+    transactions: [],
+    budgets: [],
     tags: [
         { id: 'tag-work', label: 'Arbeit', color: '#3b82f6' },
         { id: 'tag-private', label: 'Privat', color: '#10b981' },
         { id: 'tag-important', label: 'Wichtig', color: '#ef4444' },
     ],
     preferences: defaultPreferences,
+    contacts: [],
     schemaVersion: 1,
     lastUpdated: getCurrentTimestamp(),
     _hasHydrated: false,
@@ -622,6 +675,92 @@ export const useLifeOSStore = create<LifeOSStore>()(
                 });
             },
 
+            // ─── Wiki / Notes ───────────────────────────────────────────
+
+            addNote: (noteData) => {
+                const id = generateId();
+                const now = getCurrentTimestamp();
+
+                set((state) => {
+                    state.notes.push({
+                        ...noteData,
+                        id,
+                        isPinned: noteData.isPinned || false,
+                        tagIds: noteData.tagIds || [],
+                        createdAt: now,
+                        updatedAt: now,
+                        _version: 1,
+                    });
+                    state.lastUpdated = now;
+                });
+
+                return id;
+            },
+
+            updateNote: (id, updates) => {
+                set((state) => {
+                    const index = state.notes.findIndex((n) => n.id === id);
+                    if (index !== -1) {
+                        state.notes[index] = {
+                            ...state.notes[index],
+                            ...updates,
+                            updatedAt: getCurrentTimestamp(),
+                        };
+                        state.lastUpdated = getCurrentTimestamp();
+                    }
+                });
+            },
+
+            deleteNote: (id) => {
+                set((state) => {
+                    state.notes = state.notes.filter((n) => n.id !== id);
+                    state.lastUpdated = getCurrentTimestamp();
+                });
+            },
+
+            // ─── Finance ───────────────────────────────────────────────
+
+            addTransaction: (data) => {
+                const id = generateId();
+                const now = getCurrentTimestamp();
+
+                set((state) => {
+                    state.transactions.push({
+                        ...data,
+                        id,
+                        createdAt: now,
+                        updatedAt: now,
+                        _version: 1,
+                    });
+
+                    // Award XP for financial management
+                    state.preferences.xp += 10;
+
+                    state.lastUpdated = now;
+                });
+
+                return id;
+            },
+
+            deleteTransaction: (id) => {
+                set((state) => {
+                    state.transactions = state.transactions.filter((t) => t.id !== id);
+                    state.lastUpdated = getCurrentTimestamp();
+                });
+            },
+
+            updateBudget: (budget) => {
+                set((state) => {
+                    const index = state.budgets.findIndex((b) => b.category === budget.category);
+                    if (index !== -1) {
+                        state.budgets[index] = budget;
+                    } else {
+                        state.budgets.push(budget);
+                    }
+                    state.lastUpdated = getCurrentTimestamp();
+                });
+            },
+
             // ─── Habits ──────────────────────────────────────────────
 
             addHabit: (habitData) => {
@@ -917,6 +1056,113 @@ export const useLifeOSStore = create<LifeOSStore>()(
                 });
             },
 
+            updateWaterIntake: (date, amount) => {
+                set((state) => {
+                    const index = state.dailyLogs.findIndex((l) => l.date === date);
+                    const now = getCurrentTimestamp();
+
+                    if (index !== -1) {
+                        state.dailyLogs[index] = {
+                            ...state.dailyLogs[index],
+                            waterIntake: Math.max(0, amount),
+                            updatedAt: now,
+                        };
+                    } else {
+                        state.dailyLogs.push({
+                            id: generateId(),
+                            date,
+                            gratitude: [],
+                            focus: null,
+                            win: null,
+                            notes: null,
+                            waterIntake: Math.max(0, amount),
+                            createdAt: now,
+                            updatedAt: now,
+                            _version: 1,
+                        });
+                    }
+                    state.lastUpdated = now;
+                });
+            },
+
+            // ─── Personal CRM (Contacts) ───────────────────────────────
+
+            addContact: (contactData) => {
+                const id = generateId();
+                const now = getCurrentTimestamp();
+
+                set((state) => {
+                    state.contacts.push({
+                        ...contactData,
+                        id,
+                        interactions: [],
+                        lastContacted: null,
+                        createdAt: now,
+                        updatedAt: now,
+                        _version: 1,
+                    });
+                    state.lastUpdated = now;
+
+                    // Achievement check? (Socialite)
+                    state.preferences.xp += 20;
+                });
+
+                return id;
+            },
+
+            updateContact: (id, updates) => {
+                set((state) => {
+                    const index = state.contacts.findIndex((c) => c.id === id);
+                    if (index !== -1) {
+                        state.contacts[index] = {
+                            ...state.contacts[index],
+                            ...updates,
+                            updatedAt: getCurrentTimestamp(),
+                        };
+                        state.lastUpdated = getCurrentTimestamp();
+                    }
+                });
+            },
+
+            deleteContact: (id) => {
+                set((state) => {
+                    state.contacts = state.contacts.filter((c) => c.id !== id);
+                    state.lastUpdated = getCurrentTimestamp();
+                });
+            },
+
+            addInteraction: (contactId, interactionData) => {
+                set((state) => {
+                    const contact = state.contacts.find((c) => c.id === contactId);
+                    if (contact) {
+                        const interaction = {
+                            ...interactionData,
+                            id: generateId(),
+                        };
+                        contact.interactions.push(interaction);
+
+                        // Update lastContacted if this is the newest
+                        if (!contact.lastContacted || interaction.date > contact.lastContacted) {
+                            contact.lastContacted = interaction.date;
+                        }
+
+                        contact.updatedAt = getCurrentTimestamp();
+                        state.lastUpdated = getCurrentTimestamp();
+
+                        // XP for social interaction
+                        state.preferences.xp += 15;
+
+                        // Skill Progress
+                        const socialSkill = state.preferences.skills.social;
+                        socialSkill.xp += 30;
+                        if (socialSkill.xp >= socialSkill.level * 100) {
+                            socialSkill.xp -= (socialSkill.level * 100);
+                            socialSkill.level += 1;
+                        }
+                    }
+                });
+            },
+
             // ─── Tags ───────────────────────────────────────────────
 
             addTag: (tagData) => {
@@ -1108,9 +1354,171 @@ export const useLifeOSStore = create<LifeOSStore>()(
                 } catch (error) {
                     return {
                         success: false,
-                        error: error instanceof Error ? error.message : 'JSON Parsing fehlgeschlagen',
+                        error: error instanceof Error ? error.message : 'Unbekannter Fehler beim Import'
                     };
                 }
+            },
+
+            refreshMasterStreak: () => {
+                const state = get();
+                const today = formatDate(new Date());
+                const yesterday = formatDate(new Date(Date.now() - 86400000));
+
+                const { masterStreak, streakFreezes } = state.preferences;
+
+                // If already updated today or up to yesterday, avoid redundant checks
+                if (masterStreak.lastUpdate === yesterday || masterStreak.lastUpdate === today) {
+                    return;
+                }
+
+                set((state) => {
+                    let currentUpdateDate = masterStreak.lastUpdate
+                        ? new Date(new Date(masterStreak.lastUpdate).getTime() + 86400000)
+                        : new Date(yesterday);
+
+                    // Cap the catch-up to avoid infinite loops if date is very old
+                    let safetyCounter = 0;
+                    const yesterdayDate = new Date(yesterday);
+
+                    while (currentUpdateDate <= yesterdayDate && safetyCounter < 30) {
+                        const dateStr = formatDate(currentUpdateDate);
+
+                        // Check if all active habits for this date were completed
+                        const activeHabitsForDate = state.habits.filter(h => h.isActive && !h.isArchived);
+                        const logsForDate = state.habitLogs.filter(l => l.date === dateStr);
+
+                        const allHabitsDone = activeHabitsForDate.length > 0 &&
+                            activeHabitsForDate.every(h => logsForDate.find(l => l.habitId === h.id && l.completed));
+
+                        if (allHabitsDone) {
+                            state.preferences.masterStreak.current += 1;
+                            if (state.preferences.masterStreak.current > state.preferences.masterStreak.best) {
+                                state.preferences.masterStreak.best = state.preferences.masterStreak.current;
+                            }
+                        } else {
+                            if (state.preferences.streakFreezes > 0) {
+                                state.preferences.streakFreezes -= 1;
+                                // Streak preserved
+                            } else {
+                                state.preferences.masterStreak.current = 0;
+                            }
+                        }
+
+                        state.preferences.masterStreak.lastUpdate = dateStr;
+                        currentUpdateDate = new Date(currentUpdateDate.getTime() + 86400000);
+                        safetyCounter++;
+                    }
+
+                    state.lastUpdated = getCurrentTimestamp();
+                });
+            },
+
+            buyStreakFreeze: () => {
+                const state = get();
+                const COST = 1000;
+
+                if (state.preferences.xp < COST) {
+                    return { success: false, error: `Du brauchst ${COST} XP für einen Streak Freeze.` };
+                }
+
+                set((state) => {
+                    state.preferences.xp -= COST;
+                    state.preferences.streakFreezes += 1;
+                    state.lastUpdated = getCurrentTimestamp();
+                });
+
+                return { success: true };
+            },
+
+            addXP: (amount, skillId) => {
+                set((state) => {
+                    const XP_PER_LEVEL = 500;
+                    const oldLevel = Math.floor(state.preferences.xp / XP_PER_LEVEL) + 1;
+
+                    state.preferences.xp += amount;
+
+                    if (skillId && state.preferences.skills[skillId]) {
+                        const skill = state.preferences.skills[skillId];
+                        skill.xp += (amount * 2);
+                        if (skill.xp >= skill.level * 100) {
+                            skill.xp -= (skill.level * 100);
+                            skill.level += 1;
+                        }
+                    }
+
+                    const newLevel = Math.floor(state.preferences.xp / XP_PER_LEVEL) + 1;
+                    if (newLevel > oldLevel) {
+                        setTimeout(() => {
+                            useUIStore.getState().triggerCelebration('level_up', { level: newLevel });
+                        }, 0);
+                    }
+
+                    state.lastUpdated = getCurrentTimestamp();
+                });
+            },
+
+            buyItem: (itemId) => {
+                const state = get();
+                const item = SHOP_ITEMS.find(i => i.id === itemId);
+                if (!item) return { success: false, error: 'Item nicht gefunden.' };
+                if (state.preferences.xp < item.price) return { success: false, error: 'Nicht genügend XP.' };
+                if (state.preferences.inventory.includes(itemId)) return { success: false, error: 'Du besitzt dieses Item bereits.' };
+
+                set((state) => {
+                    state.preferences.xp -= item.price;
+                    if (!state.preferences.inventory) state.preferences.inventory = [];
+                    state.preferences.inventory.push(itemId);
+                    state.lastUpdated = getCurrentTimestamp();
+                });
+                return { success: true };
+            },
+
+            equipItem: (itemId, category) => {
+                set((state) => {
+                    if (state.preferences.inventory.includes(itemId)) {
+                        if (!state.preferences.equippedItems) state.preferences.equippedItems = {};
+                        state.preferences.equippedItems[category] = itemId;
+                        state.lastUpdated = getCurrentTimestamp();
+                    }
+                });
+            },
+
+            startChallenge: (challenge) => {
+                set((state) => {
+                    if (!state.preferences.activeChallenges) state.preferences.activeChallenges = [];
+                    state.preferences.activeChallenges.push(challenge);
+                    state.lastUpdated = getCurrentTimestamp();
+                });
+            },
+
+            updateChallengeProgress: (type, amount) => {
+                set((state) => {
+                    if (!state.preferences.activeChallenges) return;
+                    state.preferences.activeChallenges.forEach(c => {
+                        if (c.isActive && c.type === type) {
+                            c.currentCount += amount;
+                            if (c.currentCount >= c.targetCount) {
+                                c.isActive = false;
+                                state.preferences.xp += c.xpReward;
+                                // Level Up Check already in addXP, but since we modify xp directly here:
+                                const XP_PER_LEVEL = 500;
+                                const newLevel = Math.floor(state.preferences.xp / XP_PER_LEVEL) + 1;
+                                setTimeout(() => {
+                                    const trigger = useUIStore.getState().triggerCelebration;
+                                    trigger('achievement', {
+                                        id: c.id as any,
+                                        title: 'Challenge Abgeschlossen!',
+                                        description: c.title,
+                                        icon: '🏆',
+                                        xpReward: c.xpReward
+                                    });
+                                    // if (newLevel > oldLevel) ... (simplified for now)
+                                }, 0);
+                            }
+                        }
+                    });
+                    state.lastUpdated = getCurrentTimestamp();
+                });
             },
 
             clearAllData: () => {
@@ -1170,6 +1578,7 @@ export const useLifeOSStore = create<LifeOSStore>()(
                 state?.setHasHydrated(true);
             },
             partialize: (state) => ({
+                projects: state.projects,
                 goals: state.goals,
                 tasks: state.tasks,
                 habits: state.habits,
@@ -1193,6 +1602,19 @@ export const useLifeOSStore = create<LifeOSStore>()(
 
 export const useHydration = () => {
     return useLifeOSStore((state) => state._hasHydrated);
+};
+
+export const useWaterIntake = () => {
+    const today = getToday();
+    const water = useLifeOSStore((state) =>
+        state.dailyLogs.find(l => l.date === today)?.waterIntake || 0
+    );
+    const updateWater = useLifeOSStore((state) => state.updateWaterIntake);
+
+    return {
+        amount: water,
+        addWater: (amount: number) => updateWater(today, amount)
+    };
 };
 
 // ─── Helper Selectors ────────────────────────────────────────────────────────

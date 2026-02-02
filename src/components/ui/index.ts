@@ -23,3 +23,4 @@ export { ToastContainer, toast, useToasts } from './Toast';
 export type { Toast, ToastType } from './Toast';
 
 export { SwipeableItem } from './SwipeableItem';
+export { Slider } from './Slider';

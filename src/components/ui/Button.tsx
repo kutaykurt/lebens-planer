@@ -105,7 +105,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                         />
                     </svg>
                 ) : null}
-                <span className={cn(isLoading && 'opacity-0')}>{children}</span>
+                <span className={cn('inline-flex items-center justify-center gap-[inherit] whitespace-nowrap', isLoading && 'opacity-0')}>
+                    {children}
+                </span>
             </button>
         );
     }

@@ -239,6 +239,7 @@ export interface DailyLog {
   focus: string | null;
   win: string | null;
   notes: string | null;
+  waterIntake?: number; // glasses of water
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -259,7 +260,9 @@ export type DashboardWidget =
   | 'daily_reflection'
   | 'today_tasks'
   | 'inbox'
-  | 'habits';
+  | 'habits'
+  | 'finance_widget'
+  | 'smart_insight_widget';
 
 export interface UserPreferences {
   name: string; // Benutzername für Begrüßung
@@ -297,11 +300,24 @@ export interface UserPreferences {
     streakWarning?: string;
   };
   unlockedAchievements: string[];
+  masterStreak: {
+    current: number;
+    best: number;
+    lastUpdate: string | null; // YYYY-MM-DD
+  };
+  streakFreezes: number;
   security: {
     enabled: boolean;
     pin: string | null; // Einfacher 4-stelliger Code
     lockAfterMinutes: number; // 0 = Sofort
   };
+  inventory: string[]; // IDs of ShopItems
+  equippedItems: {
+    badge?: string;
+    avatarFrame?: string;
+    theme?: string;
+  };
+  activeChallenges: Challenge[];
 }
 
 // ─── Gamification ────────────────────────────────────────────────────────────
@@ -336,6 +352,42 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: 'journal_starter', title: 'Selbstreflexion', description: 'Schreibe deinen ersten Tagebucheintrag.', icon: '📔', xpReward: 150 },
   { id: 'level_5', title: 'High Five', description: 'Erreiche Level 5.', icon: '🖐️', xpReward: 500 },
 ];
+
+// ─── Inventory & Shop ────────────────────────────────────────────────────────
+
+export type ItemRarity = 'common' | 'rare' | 'epic' | 'legendary';
+
+export interface ShopItem {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  price: number;
+  rarity: ItemRarity;
+  category: 'badge' | 'avatar_frame' | 'theme' | 'perk';
+}
+
+export const SHOP_ITEMS: ShopItem[] = [
+  { id: 'focus_master_badge', title: 'Fokus-Meister', description: 'Ein Abzeichen für tiefe Konzentration.', icon: '🎯', price: 500, rarity: 'common', category: 'badge' },
+  { id: 'gold_frame', title: 'Goldener Rahmen', description: 'Ein prunkvoller Rahmen für dein Profil.', icon: '🖼️', price: 2000, rarity: 'epic', category: 'avatar_frame' },
+  { id: 'midnight_theme', title: 'Midnight Theme', description: 'Ein exklusives dunkles Design.', icon: '🌑', price: 5000, rarity: 'legendary', category: 'theme' },
+  { id: 'study_boost', title: 'Lern-Booster', description: '+10% XP auf alle Lern-Aufgaben.', icon: '📚', price: 1500, rarity: 'rare', category: 'perk' },
+];
+
+// ─── Challenges ──────────────────────────────────────────────────────────────
+
+export interface Challenge {
+  id: string;
+  title: string;
+  description: string;
+  targetCount: number;
+  currentCount: number;
+  xpReward: number;
+  startDate: string; // YYYY-MM-DD
+  endDate: string;   // YYYY-MM-DD
+  isActive: boolean;
+  type: 'tasks' | 'habits' | 'energy';
+}
 
 // ─── UI State ────────────────────────────────────────────────────────────────
 
@@ -459,4 +511,72 @@ export interface MediaItem {
   updatedAt: string;
   _version: number;
 }
+
+// ─── Wiki / Notes ────────────────────────────────────────────────────────────
+
+export interface Note {
+  id: string;
+  title: string;
+  content: string; // Markdown supported
+  tagIds: string[];
+  projectId?: string;
+  goalId?: string;
+  isPinned: boolean;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+}
+
+// ─── Finance ───────────────────────────────────────────────────────────────
+
+export type TransactionType = 'expense' | 'income';
+
+export interface Transaction {
+  id: string;
+  title: string;
+  amount: number;
+  type: TransactionType;
+  category: string;
+  date: string; // YYYY-MM-DD
+  note: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+}
+
+export interface Budget {
+  category: string;
+  limit: number;
+  period: 'monthly' | 'weekly';
+}
+
+// ─── Personal CRM (Contacts) ────────────────────────────────────────────────
+export type ContactCategory = 'family' | 'friend' | 'mentor' | 'colleague' | 'professional' | 'other';
+export type ContactFrequency = 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'yearly' | 'none';
+
+export interface Interaction {
+  id: string;
+  date: string; // YYYY-MM-DD
+  type: 'call' | 'message' | 'meeting' | 'event' | 'other';
+  note: string | null;
+}
+
+export interface Contact {
+  id: string;
+  name: string;
+  category: ContactCategory;
+  email: string | null;
+  phone: string | null;
+  birthday: string | null; // MM-DD
+  frequency: ContactFrequency;
+  lastContacted: string | null; // YYYY-MM-DD
+  notes: string | null;
+  importantDates: { label: string; date: string }[];
+  interactions: Interaction[];
+  tags: string[];
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+}
+
 

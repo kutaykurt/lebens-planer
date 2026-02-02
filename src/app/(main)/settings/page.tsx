@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Download, Upload, Trash2, Moon, Sun, Monitor, Shield, Database, Palette, Bell, BellOff, CheckCircle2, Layout, Type, Maximize2, Minimize2, Droplets, GripVertical, Eye, EyeOff, ArrowUp, ArrowDown, Tag as TagIcon, X, Edit2, Check, Plus, Smartphone, Lock, Unlock } from 'lucide-react';
+import { Download, Upload, Trash2, Moon, Sun, Monitor, Shield, Database, Palette, Bell, BellOff, CheckCircle2, Layout, Type, Maximize2, Minimize2, Droplets, GripVertical, Eye, EyeOff, ArrowUp, ArrowDown, Tag as TagIcon, X, Edit2, Check, Plus, Smartphone, Lock, Unlock, Sparkles } from 'lucide-react';
 import { PageContainer } from '@/components/layout';
 import { Card, Button, Dialog, DialogFooter, toast } from '@/components/ui';
 import { useLifeOSStore, usePreferences, useHydration } from '@/stores';
@@ -139,7 +139,65 @@ function NotificationSection() {
     );
 }
 
-// ─── Theme Selector ──────────────────────────────────────────────────────────
+// ─── Gamification Section ───────────────────────────────────────────────────
+
+function GamificationSection() {
+    const preferences = usePreferences();
+    const buyStreakFreeze = useLifeOSStore((s) => s.buyStreakFreeze);
+    const xp = preferences.xp;
+
+    const handleBuyFreeze = () => {
+        const result = buyStreakFreeze();
+        if (result.success) {
+            toast.success('Streak Freeze gekauft! ❄️');
+        } else {
+            toast.error(result.error || 'Fehler beim Kauf');
+        }
+    };
+
+    return (
+        <div className="space-y-4">
+            <Card variant="elevated">
+                <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-cyan-500 shadow-lg shadow-cyan-500/20 flex items-center justify-center">
+                            <Sparkles className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                            <h3 className="font-semibold text-[var(--foreground)]">Streak-Schutz</h3>
+                            <p className="text-sm text-[var(--foreground-secondary)]">Kosten: 1.000 XP pro Freeze</p>
+                        </div>
+                    </div>
+                    <div className="text-right">
+                        <p className="text-xs font-black uppercase text-[var(--foreground-muted)] mb-1">Deine XP</p>
+                        <p className="text-xl font-black text-[var(--accent-primary)]">{xp.toLocaleString()}</p>
+                    </div>
+                </div>
+
+                <div className="mt-6 flex items-center justify-between p-4 bg-[var(--background-elevated)] rounded-2xl">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center">
+                            <Monitor className="w-4 h-4 text-cyan-500" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-bold">Vorrat: {preferences.streakFreezes} Freezes</p>
+                            <p className="text-[10px] text-[var(--foreground-muted)] uppercase font-bold">Maximal 3 gleichzeitig</p>
+                        </div>
+                    </div>
+                    <Button
+                        size="sm"
+                        onClick={handleBuyFreeze}
+                        disabled={xp < 1000 || preferences.streakFreezes >= 3}
+                        className="gap-2"
+                    >
+                        <Plus className="w-4 h-4" />
+                        Kaufen
+                    </Button>
+                </div>
+            </Card>
+        </div>
+    );
+}
 
 function ThemeSelector() {
     const preferences = usePreferences();
@@ -354,6 +412,8 @@ function DashboardSection() {
         today_tasks: 'Heutige Aufgaben',
         inbox: 'Inbox (Ungeplant)',
         habits: 'Gewohnheiten',
+        finance_widget: 'Finanz-Status (Monat)',
+        smart_insight_widget: 'KI-Insights (Pattern Recognition)',
     };
 
     const toggleWidget = (id: string) => {
@@ -983,6 +1043,15 @@ export default function SettingsPage() {
                 </div>
             </div>
 
+            {/* Gamification Section */}
+            <div className="mb-8 animate-fade-in-up stagger-3">
+                <div className="flex items-center gap-2 mb-4">
+                    <Sparkles className="w-5 h-5 text-amber-500" />
+                    <h2 className="font-semibold text-[var(--foreground)]">Gamification & Belohnungen</h2>
+                </div>
+                <GamificationSection />
+            </div>
+
             {/* Tags Section */}
             <div className="mb-8 animate-fade-in-up stagger-4">
                 <div className="flex items-center gap-2 mb-4">
@@ -992,7 +1061,7 @@ export default function SettingsPage() {
                 <TagSection />
             </div>
 
-            {/* Dashboard Config */}
+            {/* Dashboard Struktur */}
             <div className="mb-8 animate-fade-in-up stagger-5">
                 <div className="flex items-center gap-2 mb-4">
                     <GripVertical className="w-5 h-5 text-[var(--foreground-muted)]" />
@@ -1007,8 +1076,6 @@ export default function SettingsPage() {
                     <Database className="w-5 h-5 text-[var(--foreground-muted)]" />
                     <h2 className="font-semibold text-[var(--foreground)]">Datenverwaltung</h2>
                 </div>
-                <ExportSection />
-                <ImportSection />
                 <ExportSection />
                 <ImportSection />
             </div>

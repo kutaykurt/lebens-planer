@@ -62,58 +62,74 @@ export function StreakWidget() {
         return { habit: bestHabit, streak: maxStreak };
     }, [habits, habitLogs]);
 
-    if (!completedOnboarding || !bestStreakData.habit) return null;
+    const preferences = useLifeOSStore((s) => s.preferences);
+    const masterStreak = preferences.masterStreak;
+    const streakFreezes = preferences.streakFreezes;
 
-    const { habit, streak } = bestStreakData;
+    if (!completedOnboarding || (!bestStreakData.habit && masterStreak.current === 0)) return null;
 
-    if (streak === 0) return null; // Don't show if 0 streak
+    const habit = bestStreakData.habit as Habit | null;
+    const streak = bestStreakData.streak;
 
     return (
         <Card variant="elevated" className="relative overflow-hidden group">
             {/* Background Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent-primary)]/5 to-transparent pointer-events-none" />
 
-            <div className="flex items-center justify-between p-4">
-                <div className="flex items-center gap-4">
-                    {/* Icon */}
-                    <div className="relative">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white shadow-lg shadow-orange-500/25 group-hover:scale-110 transition-transform duration-300">
-                            <Flame className={cn(
-                                "w-6 h-6",
-                                streak > 0 && "animate-pulse"
-                            )} />
-                        </div>
-                        {streak > 7 && (
-                            <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-[10px] font-black px-1.5 py-0.5 rounded-full border-2 border-white"
-                            >
-                                HOT
-                            </motion.div>
-                        )}
-                    </div>
-
-                    {/* Text */}
-                    <div>
-                        <div className="flex items-center gap-1.5 mb-0.5">
-                            <h3 className="font-bold text-[var(--foreground)] text-lg leading-none">
-                                {streak} <span className="text-sm font-normal text-[var(--foreground-muted)]">Tage</span>
-                            </h3>
-                            {streak > 3 && (
-                                <TrendingUp className="w-3 h-3 text-emerald-500" />
+            <div className="flex flex-col p-4 gap-4">
+                {/* Master Streak (Top) */}
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="relative">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-300">
+                                <Trophy className="w-5 h-5" />
+                            </div>
+                            {masterStreak.current > 0 && (
+                                <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full animate-pulse" />
                             )}
                         </div>
-                        <p className="text-xs text-[var(--foreground-muted)] font-medium line-clamp-1">
-                            {habit.title}
-                        </p>
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <h3 className="font-bold text-[var(--foreground)] leading-none text-base">
+                                    {masterStreak.current} <span className="text-xs font-normal text-[var(--foreground-muted)] uppercase tracking-wider">Master-Streak</span>
+                                </h3>
+                            </div>
+                            <div className="flex items-center gap-1.5 mt-1">
+                                <div className="flex gap-0.5">
+                                    {[...Array(3)].map((_, i) => (
+                                        <div
+                                            key={i}
+                                            className={cn(
+                                                "w-4 h-1 rounded-full transition-all",
+                                                i < streakFreezes ? "bg-cyan-500" : "bg-[var(--background-subtle)]"
+                                            )}
+                                            title="Streak Freeze"
+                                        />
+                                    ))}
+                                </div>
+                                <span className="text-[9px] font-black uppercase text-[var(--foreground-muted)] tracking-tighter">
+                                    {streakFreezes} Freezes
+                                </span>
+                            </div>
+                        </div>
                     </div>
+                    {masterStreak.best > masterStreak.current && (
+                        <div className="text-[10px] font-bold text-[var(--foreground-muted)] bg-[var(--background-subtle)] px-2 py-0.5 rounded-full">
+                            Best: {masterStreak.best}
+                        </div>
+                    )}
                 </div>
 
-                {/* Trophy/Rank (Decorative) */}
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <Trophy className="w-5 h-5 text-amber-500" />
-                </div>
+                {/* Habit Streak (Bottom - Divider) */}
+                {habit && streak > 0 && (
+                    <div className="pt-3 border-t border-[var(--border-subtle)] flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <Flame className={cn("w-4 h-4 text-orange-500", streak > 3 && "animate-pulse")} />
+                            <span className="text-sm font-bold text-[var(--foreground)]">{streak} <span className="text-[10px] text-[var(--foreground-muted)] uppercase">{habit.title}</span></span>
+                        </div>
+                        <TrendingUp className="w-3 h-3 text-emerald-500" />
+                    </div>
+                )}
             </div>
         </Card>
     );

@@ -69,10 +69,12 @@ self.addEventListener('fetch', (event) => {
                 }
 
                 // Clone response to put in cache
-                const responseToCache = networkResponse.clone();
-                caches.open(DYNAMIC_CACHE).then((cache) => {
-                    cache.put(event.request, responseToCache);
-                });
+                if (event.request.method === 'GET') {
+                    const responseToCache = networkResponse.clone();
+                    caches.open(DYNAMIC_CACHE).then((cache) => {
+                        cache.put(event.request, responseToCache);
+                    });
+                }
 
                 return networkResponse;
             }).catch(() => {

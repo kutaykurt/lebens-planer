@@ -22,56 +22,57 @@
   --foreground-muted: #94a3b8;
   --foreground-subtle: #cbd5e1;
 
-  /* Borders */
-  --border: rgba(15, 23, 42, 0.08);
-  --border-subtle: rgba(15, 23, 42, 0.04);
-  --border-strong: rgba(15, 23, 42, 0.15);
+  /* Borders - Increased contrast for clearer definition */
+  --border: rgba(15, 23, 42, 0.12);
+  --border-subtle: rgba(15, 23, 42, 0.06);
+  --border-strong: rgba(15, 23, 42, 0.25);
 
-  /* Primary - Vibrant Indigo */
-  --accent-primary: #6366f1;
-  --accent-primary-hover: #4f46e5;
-  --accent-primary-light: rgba(99, 102, 241, 0.1);
-  --accent-primary-glow: rgba(99, 102, 241, 0.25);
+  /* Primary - Electric Indigo/Violet */
+  --accent-primary: #7c3aed;
+  --accent-primary-hover: #6d28d9;
+  --accent-primary-light: rgba(124, 58, 237, 0.12);
+  --accent-primary-glow: rgba(124, 58, 237, 0.35);
 
-  /* Success - Fresh Emerald */
+  /* Success - Neon Emerald */
   --accent-success: #10b981;
-  --accent-success-light: rgba(16, 185, 129, 0.1);
-  --accent-success-glow: rgba(16, 185, 129, 0.25);
+  --accent-success-light: rgba(16, 185, 129, 0.12);
+  --accent-success-glow: rgba(16, 185, 129, 0.35);
 
-  /* Warning - Warm Amber */
+  /* Warning - Electric Amber */
   --accent-warning: #f59e0b;
-  --accent-warning-light: rgba(245, 158, 11, 0.1);
-  --accent-warning-glow: rgba(245, 158, 11, 0.25);
+  --accent-warning-light: rgba(245, 158, 11, 0.12);
+  --accent-warning-glow: rgba(245, 158, 11, 0.35);
 
-  /* Error - Soft Rose */
-  --accent-error: #ef4444;
-  --accent-error-light: rgba(239, 68, 68, 0.1);
+  /* Error - Vivid Crimson */
+  --accent-error: #ff4757;
+  --accent-error-light: rgba(255, 71, 87, 0.12);
 
-  /* Info - Sky Blue */
-  --accent-info: #0ea5e9;
-  --accent-info-light: rgba(14, 165, 233, 0.1);
+  /* Info - Cyan Sky */
+  --accent-info: #00d2ff;
+  --accent-info-light: rgba(0, 210, 255, 0.12);
 
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  --gradient-success: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-  --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-  --gradient-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-  --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
-  --gradient-shimmer: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  /* Ultra-Premium Gradients */
+  --gradient-primary: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%);
+  --gradient-success: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  --gradient-warning: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%);
+  --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 1) 0%, rgba(241, 245, 249, 1) 100%);
+  --gradient-shimmer: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  --gradient-electric: linear-gradient(90deg, #7c3aed, #3b82f6, #00d2ff, #7c3aed);
 
-  /* Shadows */
-  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.08);
-  --shadow-lg: 0 8px 32px rgba(15, 23, 42, 0.12);
-  --shadow-xl: 0 16px 48px rgba(15, 23, 42, 0.16);
+  /* Shadows - More defined for better depth perception */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.12);
+  --shadow-lg: 0 12px 40px rgba(15, 23, 42, 0.15);
+  --shadow-xl: 0 20px 56px rgba(15, 23, 42, 0.2);
   --shadow-glow-primary: 0 0 40px rgba(99, 102, 241, 0.2);
   --shadow-glow-success: 0 0 40px rgba(16, 185, 129, 0.2);
 
-  /* Glass Effect */
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.5);
-  --glass-blur: 20px;
+  /* Glass Effect - Higher refractive look */
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-blur: 24px;
 
   /* Timing */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -97,22 +98,22 @@
 /* Support both system preference and manual .dark class */
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
-    /* Core Background */
-    --background: #0a0a0f;
-    --background-surface: #13131a;
-    --background-elevated: #1a1a24;
-    --background-subtle: #0f0f15;
+    /* Core Background - Deeper and more ink-like */
+    --background: #050508;
+    --background-surface: #0e0e14;
+    --background-elevated: #15151f;
+    --background-subtle: #09090d;
 
-    /* Foreground */
-    --foreground: #f8fafc;
-    --foreground-secondary: #a1a1aa;
-    --foreground-muted: #71717a;
-    --foreground-subtle: #3f3f46;
+    /* Foreground - Crisp White */
+    --foreground: #ffffff;
+    --foreground-secondary: #cbd5e1;
+    --foreground-muted: #94a3b8;
+    --foreground-subtle: #475569;
 
-    /* Borders */
-    --border: rgba(255, 255, 255, 0.08);
-    --border-subtle: rgba(255, 255, 255, 0.04);
-    --border-strong: rgba(255, 255, 255, 0.15);
+    /* Borders - Sharper and more visible on dark backgrounds */
+    --border: rgba(255, 255, 255, 0.12);
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-strong: rgba(255, 255, 255, 0.2);
 
     /* Gradients for dark */
     --gradient-surface: linear-gradient(180deg, rgba(19, 19, 26, 0.95) 0%, rgba(19, 19, 26, 0.8) 100%);
@@ -123,33 +124,33 @@
     --glass-bg: rgba(19, 19, 26, 0.75);
     --glass-border: rgba(255, 255, 255, 0.08);
 
-    /* Dark shadows */
-    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.35);
-    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.4);
+    /* Dark shadows - Increased opacity for more pop */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 20px 56px rgba(0, 0, 0, 0.6);
   }
 }
 
 /* Manual dark mode via .dark class */
 :root.dark {
-  /* Core Background */
-  --background: #0a0a0f;
-  --background-surface: #13131a;
-  --background-elevated: #1a1a24;
-  --background-subtle: #0f0f15;
+  /* Core Background - Deeper and more ink-like */
+  --background: #050508;
+  --background-surface: #0e0e14;
+  --background-elevated: #15151f;
+  --background-subtle: #09090d;
 
-  /* Foreground */
-  --foreground: #f8fafc;
-  --foreground-secondary: #a1a1aa;
-  --foreground-muted: #71717a;
-  --foreground-subtle: #3f3f46;
+  /* Foreground - Crisp White */
+  --foreground: #ffffff;
+  --foreground-secondary: #cbd5e1;
+  --foreground-muted: #94a3b8;
+  --foreground-subtle: #475569;
 
-  /* Borders */
-  --border: rgba(255, 255, 255, 0.08);
-  --border-subtle: rgba(255, 255, 255, 0.04);
-  --border-strong: rgba(255, 255, 255, 0.15);
+  /* Borders - Sharper and more visible on dark backgrounds */
+  --border: rgba(255, 255, 255, 0.12);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.2);
 
   /* Gradients for dark */
   --gradient-surface: linear-gradient(180deg, rgba(19, 19, 26, 0.95) 0%, rgba(19, 19, 26, 0.8) 100%);
@@ -160,12 +161,12 @@
   --glass-bg: rgba(19, 19, 26, 0.75);
   --glass-border: rgba(255, 255, 255, 0.08);
 
-  /* Dark shadows */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.35);
-  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.4);
+  /* Dark shadows - Increased opacity for more pop */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 56px rgba(0, 0, 0, 0.6);
 }
 
 /* ─── Theme Presets ───────────────────────────────────────────────────────── */
@@ -649,6 +650,32 @@ p {
   background: var(--foreground-muted);
 }
 
+/* ─── Premium UI Utilities ────────────────────────────────────────────────── */
+
+.shadow-glow-primary {
+  box-shadow: 0 0 20px var(--accent-primary-glow);
+}
+
+.shadow-glow-success {
+  box-shadow: 0 0 20px var(--accent-success-glow);
+}
+
+.shadow-glow-warning {
+  box-shadow: 0 0 20px var(--accent-warning-glow);
+}
+
+.shadow-glow-info {
+  box-shadow: 0 0 20px var(--accent-info-glow);
+}
+
+.hover-lift {
+  transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+}
+
 /* ─── Selection ───────────────────────────────────────────────────────────── */
 
 ::selection {
@@ -667,6 +694,19 @@ p {
 }
 
 /* ─── Utilities ───────────────────────────────────────────────────────────── */
+
+.text-glow {
+  text-shadow: 0 0 10px var(--accent-primary-glow);
+}
+
+.electric-text {
+  background: var(--gradient-electric);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
 
 .truncate-2 {
   display: -webkit-box;
@@ -766,4 +806,88 @@ p {
   --color-foreground: var(--foreground);
   --font-sans: var(--font-body);
   --font-mono: var(--font-geist-mono);
+}
+
+/* ─── Premium Glow Utilities ─────────────────────────────────────────────── */
+
+.text-glow-blue {
+  text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+}
+
+.text-glow-purple {
+  text-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+}
+
+.text-glow-rose {
+  text-shadow: 0 0 15px rgba(244, 63, 94, 0.5);
+}
+
+.text-glow-emerald {
+  text-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+}
+
+.text-glow-amber {
+  text-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
+}
+
+.text-glow-indigo {
+  text-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+}
+
+/* ─── Advanced Shimmer ──────────────────────────────────────────────────── */
+
+@keyframes shimmer-fast {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer-fast {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background-size: 200% 100%;
+  animation: shimmer-fast 1.5s infinite;
+}
+
+/* ─── Keyframe Enhancements ─────────────────────────────────────────────── */
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+/* ─── Extra Radius ──────────────────────────────────────────────────────── */
+
+.rounded-4xl {
+  border-radius: 2.5rem;
+}
+
+.rounded-5xl {
+  border-radius: 3rem;
+}
+
+.rounded-6xl {
+  border-radius: 3.5rem;
+}
+
+/* ─── Layout Helpers ────────────────────────────────────────────────────── */
+
+.mask-fade-bottom {
+  mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
+.mask-fade-top {
+  mask-image: linear-gradient(to top, black 80%, transparent 100%);
 }

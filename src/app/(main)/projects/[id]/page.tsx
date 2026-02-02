@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { PageContainer } from '@/components/layout';
 import { Card, Button, Dialog, DialogFooter, Input, Textarea, toast } from '@/components/ui';
-import { useLifeOSStore, useHydration } from '@/stores';
+import { useLifeOSStore, useHydration, useProjectById } from '@/stores';
 import { cn, formatDate, getRelativeDateLabel } from '@/lib/utils';
 import type { Project, Goal, Task } from '@/types';
 import { GOAL_CATEGORY_LABELS, TIME_HORIZON_LABELS } from '@/types';
@@ -125,8 +125,9 @@ export default function ProjectDetailPage() {
     const id = params.id as string;
     const isHydrated = useHydration();
 
-    const project = useLifeOSStore((s) => s.projects.find(p => p.id === id));
-    const projectGoals = useLifeOSStore((s) => s.goals.filter(g => g.projectId === id && g.status !== 'archived'));
+    const project = useProjectById(id);
+    const allGoals = useLifeOSStore((s) => s.goals);
+    const projectGoals = allGoals.filter(g => g.projectId === id && g.status !== 'archived');
     // Find tasks belonging to these goals
     const allTasks = useLifeOSStore((s) => s.tasks);
     const projectTasks = allTasks.filter(t => t.goalId && projectGoals.some(g => g.id === t.goalId) && t.status !== 'cancelled');

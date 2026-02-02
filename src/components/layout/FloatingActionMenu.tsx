@@ -48,7 +48,7 @@ export function FloatingActionMenu() {
     ];
 
     return (
-        <div className="fixed bottom-24 right-5 z-40 flex flex-col items-end gap-3 pointer-events-none">
+        <div suppressHydrationWarning className="fixed bottom-24 right-5 z-40 flex flex-col items-end gap-3 pointer-events-none">
 
             <AnimatePresence>
                 {isOpen && (

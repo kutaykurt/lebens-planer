@@ -316,7 +316,8 @@ function EditGoalDialog({
     const [selectedTags, setSelectedTags] = useState<string[]>(currentTagIds || []);
 
     const updateGoal = useLifeOSStore((s) => s.updateGoal);
-    const projects = useLifeOSStore((s) => s.projects.filter(p => p.status === 'active'));
+    const allProjectsStore = useLifeOSStore((s) => s.projects);
+    const projects = allProjectsStore.filter(p => p.status === 'active');
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

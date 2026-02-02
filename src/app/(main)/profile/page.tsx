@@ -2,14 +2,15 @@
 
 import { useMemo } from 'react';
 import {
-    Trophy, Star, Target, Sparkles, Award, Lock
+    Trophy, Star, Target, Sparkles, Award, Lock, ShoppingBag, ArrowRight
 } from 'lucide-react';
 import { PageContainer } from '@/components/layout';
 import { Card, Button } from '@/components/ui';
 import { useLifeOSStore, useHydration } from '@/stores';
 import { cn } from '@/lib/utils';
-import { ACHIEVEMENTS, type Achievement, type AchievementId } from '@/types';
+import { ACHIEVEMENTS, SHOP_ITEMS, type Achievement, type AchievementId } from '@/types';
 import { WheelOfLife } from '@/components/features/WheelOfLife';
+import { SkillTree } from '@/components/features/SkillTree';
 
 function AchievementCard({ achievement, unlocked }: { achievement: Achievement; unlocked: boolean }) {
     return (
@@ -108,43 +109,66 @@ export default function ProfilePage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Skills */}
-                <div>
-                    <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                        <Target className="w-5 h-5 text-blue-500" />
-                        Attribute & Balance
-                    </h2>
-                    <Card className="p-6">
-                        <WheelOfLife />
-                        <div className="mt-6 space-y-3">
-                            {Object.entries(preferences.skills).map(([key, skill]) => (
-                                <div key={key} className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-lg bg-[var(--background-subtle)] flex items-center justify-center text-lg">
-                                        {key === 'mental' ? '🧠' :
-                                            key === 'physical' ? '💪' :
-                                                key === 'social' ? '🤝' :
-                                                    key === 'craft' ? '🛠️' : '✨'}
-                                    </div>
-                                    <div className="flex-1">
-                                        <div className="flex justify-between items-center mb-1">
-                                            <span className="text-sm font-bold capitalize">{key}</span>
-                                            <span className="text-xs text-[var(--foreground-muted)]">Lvl {skill.level}</span>
-                                        </div>
-                                        <div className="h-1.5 bg-[var(--background-subtle)] rounded-full overflow-hidden">
-                                            <div
-                                                className="h-full bg-[var(--accent-primary)]"
-                                                style={{ width: `${(skill.xp / (skill.level * 100)) * 100}%` }}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+                {/* Skills & Attributes */}
+                <div className="md:col-span-2 space-y-12">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        {/* Wheel of Life Overview */}
+                        <div className="lg:col-span-1">
+                            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+                                <Target className="w-5 h-5 text-blue-500" />
+                                Skill-Balance
+                            </h2>
+                            <WheelOfLife />
                         </div>
-                    </Card>
+
+                        {/* Detailized Skill Tree */}
+                        <div className="lg:col-span-2">
+                            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+                                <Sparkles className="w-5 h-5 text-amber-500" />
+                                Advanced Skill Tree
+                            </h2>
+                            <Card className="p-8">
+                                <SkillTree />
+                            </Card>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Achievements */}
-                <div>
+                {/* Inventory Section */}
+                <div className="md:col-span-2">
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-xl font-bold flex items-center gap-2 text-[var(--foreground)]">
+                            <ShoppingBag className="w-5 h-5 text-indigo-500" /> Ausrüstung & Inventar
+                        </h2>
+                        <Button variant="ghost" size="sm" className="text-xs font-black uppercase tracking-wider" onClick={() => window.location.href = '/shop'}>
+                            Zum Shop <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                    </div>
+
+                    {preferences.inventory && preferences.inventory.length > 0 ? (
+                        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4">
+                            {preferences.inventory.map(itemId => {
+                                const item = SHOP_ITEMS.find(i => i.id === itemId);
+                                if (!item) return null;
+                                return (
+                                    <Card key={itemId} className="p-4 flex flex-col items-center justify-center gap-2 group hover:border-[var(--accent-primary)] transition-all cursor-pointer">
+                                        <div className="text-3xl group-hover:scale-125 transition-transform duration-500">{item.icon}</div>
+                                        <p className="text-[10px] font-bold text-[var(--foreground)] truncate w-full text-center">{item.title}</p>
+                                    </Card>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <Card className="p-12 border-dashed flex flex-col items-center text-center">
+                            <ShoppingBag className="w-12 h-12 text-[var(--foreground-muted)] mb-4 opacity-20" />
+                            <p className="text-[var(--foreground-muted)] mb-4">Dein Rucksack ist noch leer.</p>
+                            <Button variant="primary" size="sm" onClick={() => window.location.href = '/shop'}>Erstes Item kaufen</Button>
+                        </Card>
+                    )}
+                </div>
+
+                {/* Achievements Section */}
+                <div className="md:col-span-2">
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-xl font-bold flex items-center gap-2">
                             <Trophy className="w-5 h-5 text-amber-500" />
@@ -155,7 +179,7 @@ export default function ProfilePage() {
                         </span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                         {ACHIEVEMENTS.map(ach => (
                             <AchievementCard
                                 key={ach.id}

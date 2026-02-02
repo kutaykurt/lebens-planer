@@ -173,7 +173,7 @@ Dieser Plan beschreibt alle möglichen Erweiterungen für Life OS, priorisiert n
 **Priorität: ⭐⭐⭐ | Aufwand: Mittel**
 
 - [x] **Monatsrückblick** - Automatische Zusammenfassung
-- [ ] **Quartalsziele**
+- [x] **Quartalsziele & Berichte**
 - [x] **Jahresrückblick**
 - [x] **Jahresvorschau**
 
@@ -213,7 +213,7 @@ Dieser Plan beschreibt alle möglichen Erweiterungen für Life OS, priorisiert n
 
 - [x] **Service Worker** - Offline-Funktionalität
 - [x] **App installierbar** - "Zum Startbildschirm hinzufügen"
-- [ ] **Splash Screen** - Ladebildschirm beim Start
+- [x] **Splash Screen** - Ladebildschirm beim Start
 - [x] **App-Icon** - Hochauflösende Icons für alle Geräte
 
 ### 9.2 Performance
@@ -239,9 +239,9 @@ Dieser Plan beschreibt alle möglichen Erweiterungen für Life OS, priorisiert n
 ### 10.2 Streaks & Challenges
 **Priorität: ⭐⭐ | Aufwand: Niedrig**
 
-- [ ] **Globaler Streak** - Tage am Stück mit allen Habits
-- [ ] **30-Tage-Challenges** - Zeitlich begrenzte Ziele
-- [ ] **Streak Freeze** - Einmal pro Woche erlaubt
+- [x] **Globaler Streak** - Tage am Stück mit allen Habits
+- [x] **30-Tage-Challenges** - Zeitlich begrenzte Ziele
+- [x] **Streak Freeze** - Einmal pro Woche erlaubt (Kaufbar mit XP)
 - [ ] **Comeback Bonus** - Extra Punkte nach Pause
 
 ---
@@ -264,33 +264,11 @@ Dieser Plan beschreibt alle möglichen Erweiterungen für Life OS, priorisiert n
 **Priorität: ⭐⭐⭐ | Aufwand: Mittel**
 
 - [x] **Swipe-Gesten** - Task nach rechts = erledigt (Komplett implementiert)
-- [x] **Pull-to-Refresh** - Seite aktualisieren (Native Browser Support)
-- [ ] **Long-Press Menu** - Kontextmenü für Aktionen
-- [ ] **Haptic Feedback** - Vibrationen bei Aktionen
-
-### 12.2 Widgets (Android/iOS)
-**Priorität: ⭐⭐ | Aufwand: Sehr Hoch**
-
-- [x] **FAB (Floating Action Button)** - Quick Add Menu
-- [x] **Streak Widget** - Aktuelle Streak anzeigen (Dashboard)
-- [ ] **Native Widgets** (Homescreen) - (Requires Capacitor/Native Wrapper)
----
-
-## 🗓️ Empfohlene Reihenfolge
-
-| Phase | Priorität | Geschätzter Aufwand | Empfehlung |
-|-------|-----------|---------------------|------------|
-| 2.1 Task-Management | ⭐⭐⭐⭐⭐ | 4-6 Stunden | **Jetzt machen!** |
-| 2.3 Habit Details | ⭐⭐⭐⭐ | 3-4 Stunden | **Jetzt machen!** |
-| 7.1 Tägliche Reflexion | ⭐⭐⭐⭐ | 2-3 Stunden | **Jetzt machen!** |
-| 7.3 Mood Tracking | ⭐⭐⭐ | 1-2 Stunden | Diese Woche |
-| 2.2 Kalender-Ansicht | ⭐⭐⭐⭐⭐ | 6-8 Stunden | Diese Woche |
-| 3.1 Dashboard Stats | ⭐⭐⭐⭐ | 4-6 Stunden | Nächste Woche |
-| 4.1 Push Notifications | ⭐⭐⭐⭐ | 4-5 Stunden | Nächste Woche |
-| 9.1 PWA Complete | ⭐⭐⭐⭐ | 3-4 Stunden | Nächste Woche |
-| 6.1 Tags | ⭐⭐⭐ | 3-4 Stunden | Später |
-| 5.1 Customization | ⭐⭐⭐ | 2-3 Stunden | Später |
-| 8.1 Cloud Sync | ⭐⭐⭐ | 8-12 Stunden | Viel später |
+- [x] **Compact Dashboard Grid**: Redesigned Today page with a cohesive grid layout.
+- [x] **Widget Optimization**: Implemented compact modes for all dashboard widgets.
+- [x] **Reduced Whitespace**: Tightened UI spacing for better information density.
+- [x] **Advanced Skill Tree**: Visual representation of character progress with branching nodes and level requirements.
+- [ ] **Native Mobile Widgets**: Initial support for iOS/Android home screen.
 
 ---
 
@@ -300,17 +278,20 @@ Dieser Plan beschreibt alle möglichen Erweiterungen für Life OS, priorisiert n
 - [x] **Skill System** - Fortschritt in Lebensbereichen
 - [x] **Character Card** - Dein digitaler Avatar (Basis)
 - [x] **Celebrations** - Konfetti & Level Up Animationen
-- [ ] **Inventory** - Belohnungen für Meilensteine (ausrüstbar)
-- [ ] **Skill Tree** - Komplexe Abhängigkeiten visualisieren
+- [x] **Inventory** - Belohnungen für Meilensteine (ausrüstbar)
+- [x] **Skill Tree** - Komplexe Abhängigkeiten visualisieren (Advanced Version)
 
-### 13.2 Hyper-Analytics
+### 13.2 Hyper-Analytics & Finance
 - [x] **Year in Pixels** - Emotionale Heatmap
 - [x] **Correlation Engine** - Statistische Zusammenhänge
 - [x] **Wheel of Life** - Echtzeit-Balance-Check
+- [x] **Finance Tracker** - Ausgaben, Einnahmen & Budgets mit XP-Belohnung
+- [x] **Personal Wiki** - Integrierte Wissensdatenbank
+- [x] **Weekly AI Briefing** - Automatisierte Erfolgs-Zusammenfassung
 
 ### 13.3 Focus & flow
 - [x] **Zen Mode** - Vollbild-Focus Cockpit
-- [x] **Ambient Soundscapes** - Integrierte Audiokulissen
+- [ ] **Ambient Soundscapes** - Integrierte Audiokulissen (Soundboard)
 - [ ] **Deep Work Timer** - Mit automatischen Pausenblocks
 
 ---

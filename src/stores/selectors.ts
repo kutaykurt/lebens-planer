@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useLifeOSStore } from './lifeOSStore';
 import { formatDate, subtractDays, getWeekStart, getWeekEnd, parseDate } from '@/lib/utils';
-import type { Task, Goal, Habit, HabitLog, EnergyLog, DailyLog } from '@/types';
+import type { Task, Goal, Habit, HabitLog, EnergyLog, DailyLog, Project, Contact } from '@/types';
 
 // ─── Helper to get stable date ───────────────────────────────────────────────
 
@@ -134,6 +134,16 @@ export const useGoalById = (id: string): Goal | undefined => {
 export const useActiveGoalsCount = (): number => {
     const goals = useLifeOSStore((state) => state.goals);
     return useMemo(() => goals.filter((g) => g.status === 'active').length, [goals]);
+};
+
+// ─── Project Selectors ───────────────────────────────────────────────────────
+
+/**
+ * Get project by ID
+ */
+export const useProjectById = (id: string): Project | undefined => {
+    const projects = useLifeOSStore((state) => state.projects);
+    return useMemo(() => projects.find((p) => p.id === id), [projects, id]);
 };
 
 // ─── Habit Selectors ─────────────────────────────────────────────────────────
@@ -418,4 +428,36 @@ export const useWeekSummary = (weekStart: Date) => {
             activeGoalsCount,
         };
     }, [tasks, habits, habitLogs, energyLogs, goals, weekStart]);
+};
+
+// ─── Contact Selectors ───────────────────────────────────────────────────────
+
+/**
+ * Get all contacts sorted by name
+ */
+export const useContacts = (): Contact[] => {
+    const contacts = useLifeOSStore((state) => state.contacts);
+    return useMemo(() => {
+        return [...contacts].sort((a, b) => a.name.localeCompare(b.name));
+    }, [contacts]);
+};
+
+/**
+ * Get contact by ID
+ */
+export const useContactById = (id: string): Contact | undefined => {
+    const contacts = useLifeOSStore((state) => state.contacts);
+    return useMemo(() => contacts.find((c) => c.id === id), [contacts, id]);
+};
+
+/**
+ * Get contacts by category
+ */
+export const useContactsByCategory = (category: string): Contact[] => {
+    const contacts = useLifeOSStore((state) => state.contacts);
+    return useMemo(() => {
+        return contacts
+            .filter((c) => c.category === category)
+            .sort((a, b) => a.name.localeCompare(b.name));
+    }, [contacts, category]);
 };

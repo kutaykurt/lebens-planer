@@ -1,4 +1,4 @@
-export { useLifeOSStore, useHydration, usePreferences, useHasCompletedOnboarding } from './lifeOSStore';
+export { useLifeOSStore, useHydration, useWaterIntake, usePreferences, useHasCompletedOnboarding } from './lifeOSStore';
 export * from './uiStore';
 export type { LifeOSStore } from './lifeOSStore';
 
@@ -16,6 +16,7 @@ export {
     useGoalsByCategory,
     useGoalById,
     useActiveGoalsCount,
+    useProjectById,
 
     // Habit Selectors
     useActiveHabits,
