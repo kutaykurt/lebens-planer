@@ -121,27 +121,30 @@ export default function AnalyticsPage() {
                                 <h1 className="text-5xl font-black text-[var(--foreground)] tracking-tighter uppercase italic bg-clip-text text-transparent bg-gradient-to-r from-[var(--foreground)] to-[var(--foreground-muted)]">
                                     Analytik-<span className="text-indigo-500">Kern</span>
                                 </h1>
-                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500">System Mode: Diagnostic / Deep Analytics</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500">System-Modus: Diagnose / Tiefen-Analyse</p>
+                                <p className="text-[10px] text-[var(--foreground-muted)] font-medium mt-1">
+                                    Analysiere deine Fortschritte, Energie-Level und Muster für eine datengestützte Selbstoptimierung.
+                                </p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 flex-1 lg:max-w-3xl">
-                        <Card variant="glass" className="p-5 rounded-[2rem] border-blue-500/10 bg-blue-500/5 backdrop-blur-xl">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 lg:max-w-3xl w-full">
+                        <Card variant="glass" className="p-4 md:p-5 rounded-[2rem] border-blue-500/10 bg-blue-500/5 backdrop-blur-xl flex flex-col items-center justify-center text-center">
                             <p className="text-[9px] font-black uppercase tracking-widest text-blue-500 mb-1">Items</p>
-                            <p className="text-3xl font-black tracking-tighter">{stats.completedTasks}</p>
+                            <p className="text-2xl md:text-3xl font-black tracking-tighter">{stats.completedTasks}</p>
                         </Card>
-                        <Card variant="glass" className="p-5 rounded-[2rem] border-amber-500/10 bg-amber-500/5 backdrop-blur-xl">
+                        <Card variant="glass" className="p-4 md:p-5 rounded-[2rem] border-amber-500/10 bg-amber-500/5 backdrop-blur-xl flex flex-col items-center justify-center text-center">
                             <p className="text-[9px] font-black uppercase tracking-widest text-amber-500 mb-1">Energie</p>
-                            <p className="text-3xl font-black tracking-tighter">{stats.avgEnergy}</p>
+                            <p className="text-2xl md:text-3xl font-black tracking-tighter">{stats.avgEnergy}</p>
                         </Card>
-                        <Card variant="glass" className="p-5 rounded-[2rem] border-emerald-500/10 bg-emerald-500/5 backdrop-blur-xl">
+                        <Card variant="glass" className="p-4 md:p-5 rounded-[2rem] border-emerald-500/10 bg-emerald-500/5 backdrop-blur-xl flex flex-col items-center justify-center text-center">
                             <p className="text-[9px] font-black uppercase tracking-widest text-emerald-500 mb-1">Rate</p>
-                            <p className="text-3xl font-black tracking-tighter">{stats.taskSuccessRate}%</p>
+                            <p className="text-2xl md:text-3xl font-black tracking-tighter">{stats.taskSuccessRate}%</p>
                         </Card>
-                        <Card variant="glass" className="p-5 rounded-[2rem] border-purple-500/10 bg-purple-500/5 backdrop-blur-xl">
+                        <Card variant="glass" className="p-4 md:p-5 rounded-[2rem] border-purple-500/10 bg-purple-500/5 backdrop-blur-xl flex flex-col items-center justify-center text-center">
                             <p className="text-[9px] font-black uppercase tracking-widest text-purple-500 mb-1">Score</p>
-                            <p className="text-3xl font-black tracking-tighter text-glow-indigo">8.4</p>
+                            <p className="text-2xl md:text-3xl font-black tracking-tighter text-glow-indigo">8.4</p>
                         </Card>
                     </div>
                 </div>
@@ -197,7 +200,7 @@ export default function AnalyticsPage() {
                                         <div className="w-1.5 h-4 bg-indigo-500 rounded-full" />
                                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500">Quartals-Protokoll</span>
                                     </div>
-                                    <h3 className="text-4xl font-black text-[var(--foreground)] tracking-tighter uppercase italic leading-none">Status: <span className="text-emerald-500">Aszendent</span></h3>
+                                    <h3 className="text-4xl font-black text-[var(--foreground)] tracking-tighter uppercase italic leading-none">Status: <span className="text-emerald-500 text-glow-emerald">Höchstform</span></h3>
                                 </div>
                                 <div className="grid grid-cols-2 gap-10">
                                     <div className="space-y-1">
@@ -228,7 +231,7 @@ export default function AnalyticsPage() {
                                     </div>
                                 </Card>
                                 <Button className="h-14 px-8 rounded-2xl bg-indigo-500 hover:bg-indigo-600 text-white font-black uppercase tracking-widest text-xs shadow-lg shadow-indigo-500/20 group">
-                                    Report entfalten <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                                    Fokus optimieren <ArrowUpRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                 </Button>
                             </div>
                         </div>
@@ -241,8 +244,8 @@ export default function AnalyticsPage() {
                         <Globe className="w-6 h-6 text-indigo-500" /> Lebens-Sphäre
                     </h2>
 
-                    <Card variant="glass" className="p-8 rounded-[3rem] border-white/10 bg-white/5 shadow-2xl overflow-hidden aspect-square flex flex-col items-center justify-center relative">
-                        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.03] to-purple-500/[0.03] pointer-events-none" />
+                    <Card variant="glass" className="p-4 rounded-[3rem] border-white/10 bg-white/5 shadow-2xl relative overflow-visible flex items-center justify-center min-h-[350px]">
+                        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.03] to-purple-500/[0.03] pointer-events-none rounded-[3rem]" />
                         <WheelOfLife />
                     </Card>
 
@@ -283,7 +286,7 @@ export default function AnalyticsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-32">
                 <Card variant="glass" className="p-8 rounded-[3rem] border-white/10 bg-white/5">
                     <h3 className="text-sm font-black uppercase tracking-[0.2em] text-indigo-500 mb-8 flex items-center gap-2">
-                        <LayoutGrid className="w-4 h-4" /> Sektoren-Abdeckung
+                        <LayoutGrid className="w-4 h-4" /> Ziele-Verteilung
                     </h3>
                     <div className="space-y-6">
                         {Object.entries(stats.tasksByCategory)

@@ -79,6 +79,7 @@ interface LifeOSActions {
     updateGoal: (id: string, updates: Partial<Goal>) => void;
     completeGoal: (id: string) => void;
     archiveGoal: (id: string) => void;
+    deleteGoal: (id: string) => void;
     reorderGoals: (goalIds: string[]) => void;
 
     // Tasks
@@ -119,6 +120,7 @@ interface LifeOSActions {
     addHabit: (habit: Omit<Habit, 'id' | 'createdAt' | 'updatedAt' | '_version' | 'isActive' | 'isArchived' | 'archivedAt' | 'tagIds'> & { tagIds?: string[] }) => string;
     updateHabit: (id: string, updates: Partial<Habit>) => void;
     archiveHabit: (id: string) => void;
+    deleteHabit: (id: string) => void;
     toggleHabitForDate: (habitId: string, date: string) => void;
 
     // Energy
@@ -175,7 +177,7 @@ export type LifeOSStore = LifeOSState & LifeOSActions;
 
 const defaultPreferences: UserPreferences = {
     name: 'User',
-    theme: 'system',
+    theme: 'light',
     defaultView: 'today',
     hasCompletedOnboarding: false,
     weekStartsOn: 1, // Monday
@@ -198,7 +200,7 @@ const defaultPreferences: UserPreferences = {
     appearance: {
         accentColor: '#6366f1',
         themePreset: 'none',
-        compactMode: false,
+        compactMode: true,
         fontSize: 'medium',
     },
     dashboard: {
@@ -419,6 +421,13 @@ export const useLifeOSStore = create<LifeOSStore>()(
                 });
             },
 
+            deleteGoal: (id: string) => {
+                set((state) => {
+                    state.goals = state.goals.filter((g) => g.id !== id);
+                    state.lastUpdated = getCurrentTimestamp();
+                });
+            },
+
             reorderGoals: (goalIds) => {
                 set((state) => {
                     goalIds.forEach((id, index) => {
@@ -554,14 +563,10 @@ export const useLifeOSStore = create<LifeOSStore>()(
                 });
             },
 
-            deleteTask: (id) => {
+            deleteTask: (id: string) => {
                 set((state) => {
-                    const index = state.tasks.findIndex((t) => t.id === id);
-                    if (index !== -1) {
-                        state.tasks[index].status = 'cancelled';
-                        state.tasks[index].updatedAt = getCurrentTimestamp();
-                        state.lastUpdated = getCurrentTimestamp();
-                    }
+                    state.tasks = state.tasks.filter((t) => t.id !== id);
+                    state.lastUpdated = getCurrentTimestamp();
                 });
             },
 
@@ -686,6 +691,7 @@ export const useLifeOSStore = create<LifeOSStore>()(
                         ...noteData,
                         id,
                         isPinned: noteData.isPinned || false,
+                        pages: noteData.pages || [''],
                         tagIds: noteData.tagIds || [],
                         createdAt: now,
                         updatedAt: now,
@@ -822,6 +828,14 @@ export const useLifeOSStore = create<LifeOSStore>()(
                         state.habits[index].updatedAt = getCurrentTimestamp();
                         state.lastUpdated = getCurrentTimestamp();
                     }
+                });
+            },
+
+            deleteHabit: (id: string) => {
+                set((state) => {
+                    state.habits = state.habits.filter((h) => h.id !== id);
+                    state.habitLogs = state.habitLogs.filter((l) => l.habitId !== id);
+                    state.lastUpdated = getCurrentTimestamp();
                 });
             },
 

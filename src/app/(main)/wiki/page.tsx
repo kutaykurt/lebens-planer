@@ -26,6 +26,7 @@ export default function WikiPage() {
     const [showAdd, setShowAdd] = useState(false);
     const [viewMode, setViewMode] = useState<'grid' | 'graph'>('grid');
     const [editMode, setEditMode] = useState(false);
+    const [deletingNoteId, setDeletingNoteId] = useState<string | null>(null);
 
     // Form state
     const [title, setTitle] = useState('');
@@ -131,9 +132,9 @@ export default function WikiPage() {
                 <div>
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-500 text-xs font-black uppercase tracking-widest mb-4">
                         <Share2 className="w-3 h-3" />
-                        Second Brain
+                        Zweites Gedächtnis
                     </div>
-                    <h1 className="text-5xl font-black text-[var(--foreground)] tracking-tight">Personal <span className="text-indigo-500">Wiki</span></h1>
+                    <h1 className="text-5xl font-black text-[var(--foreground)] tracking-tight">Neurales <span className="text-indigo-500">Wiki</span></h1>
                     <p className="text-[var(--foreground-secondary)] text-lg">Vernetzte Gedanken und Wissen.</p>
                 </div>
 
@@ -383,9 +384,8 @@ export default function WikiPage() {
                             variant="ghost"
                             className="text-[var(--accent-error)] gap-2 hover:bg-[var(--accent-error)]/10"
                             onClick={() => {
-                                if (activeNote && typeof window !== 'undefined' && window.confirm('Möchtest du diese Notiz wirklich löschen?')) {
-                                    deleteNote(activeNote.id);
-                                    setActiveNote(null);
+                                if (activeNote) {
+                                    setDeletingNoteId(activeNote.id);
                                 }
                             }}
                         >
@@ -458,6 +458,24 @@ export default function WikiPage() {
                         <Button type="submit" disabled={!title.trim()}>Speichern</Button>
                     </DialogFooter>
                 </form>
+            </Dialog>
+            {/* Deletion Dialog */}
+            <Dialog
+                open={!!deletingNoteId}
+                onClose={() => setDeletingNoteId(null)}
+                title="Wissen löschen?"
+                description="Möchtest du diese Notiz wirklich permanent aus deinem digitalen Gehirn löschen?"
+            >
+                <DialogFooter>
+                    <Button variant="ghost" onClick={() => setDeletingNoteId(null)}>Abbrechen</Button>
+                    <Button variant="destructive" onClick={() => {
+                        if (deletingNoteId) {
+                            deleteNote(deletingNoteId);
+                            setDeletingNoteId(null);
+                            setActiveNote(null);
+                        }
+                    }}>Löschen</Button>
+                </DialogFooter>
             </Dialog>
         </PageContainer>
     );

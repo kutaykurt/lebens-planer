@@ -22,6 +22,7 @@ export interface Project {
   deadline: string | null; // YYYY-MM-DD
   completedAt: string | null;
   createdAt: string;
+  progress: number; // 0-100
   updatedAt: string;
   tagIds: string[];
   sortOrder: number;
@@ -59,6 +60,7 @@ export interface Goal {
   timeHorizon: TimeHorizon;
   status: GoalStatus;
   createdAt: string;
+  progress: number; // 0-100
   updatedAt: string;
   completedAt: string | null;
   archivedAt: string | null;
@@ -518,6 +520,7 @@ export interface Note {
   id: string;
   title: string;
   content: string; // Markdown supported
+  pages?: string[]; // Multiple pages support
   tagIds: string[];
   projectId?: string;
   goalId?: string;

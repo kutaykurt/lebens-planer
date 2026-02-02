@@ -13,7 +13,7 @@ export default function HomePage() {
   useEffect(() => {
     if (isHydrated) {
       if (hasCompletedOnboarding) {
-        router.replace('/today');
+        router.replace('/dashboard');
       } else {
         router.replace('/onboarding');
       }

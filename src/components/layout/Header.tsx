@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Settings, Plus, Sparkles, Terminal, Activity, Shield, Zap } from 'lucide-react';
+import { Settings, Sparkles, Terminal, Activity, Shield, Zap } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { useLifeOSStore } from '@/stores';
 import { cn } from '@/lib/utils';
@@ -62,15 +62,7 @@ export function Header({ title, subtitle, showQuickAdd = true, onQuickAdd }: Hea
                         </div>
                     </Link>
 
-                    {showQuickAdd && (
-                        <Button
-                            onClick={onQuickAdd}
-                            className="bg-black text-white hover:bg-zinc-800 rounded-2xl h-12 px-6 shadow-xl shadow-black/10 border-none group/add transition-all"
-                        >
-                            <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" />
-                            <span className="hidden sm:inline font-black uppercase tracking-widest text-[10px] ml-2">Initialisieren</span>
-                        </Button>
-                    )}
+
 
                     <Link href="/settings">
                         <Button

@@ -47,95 +47,80 @@ export function WheelOfLife() {
     });
 
     return (
-        <Card variant="elevated" className="p-6 mb-8 overflow-hidden bg-[var(--background-surface)]">
-            <div className="flex flex-col items-center">
-                <div className="text-center mb-6">
-                    <h3 className="text-xl font-bold text-[var(--foreground)]">Lebensrad</h3>
-                    <p className="text-xs text-[var(--foreground-muted)] uppercase tracking-widest font-black">Dein Skill-Gleichgewicht</p>
-                </div>
+        <div className="relative w-full h-full flex items-center justify-center p-4">
+            <svg
+                viewBox={`0 0 ${size} ${size}`}
+                className="w-full h-full max-h-[300px] overflow-visible"
+            >
+                {/* Background pentagons */}
+                {guides.map((g, i) => (
+                    <polygon
+                        key={i}
+                        points={g}
+                        fill="none"
+                        stroke="var(--border)"
+                        strokeWidth="1.5"
+                        className="opacity-40"
+                    />
+                ))}
 
-                <div className="relative w-[300px] h-[300px]">
-                    <svg width={size} height={size} className="overflow-visible">
-                        {/* Background pentagons */}
-                        {guides.map((g, i) => (
-                            <polygon
-                                key={i}
-                                points={g}
-                                fill="none"
-                                stroke="var(--border)"
-                                strokeWidth="1"
-                                className="opacity-50"
-                            />
-                        ))}
-
-                        {/* Axis lines */}
-                        {categories.map((_, i) => {
-                            const angle = (Math.PI * 2 * i) / numPoints - Math.PI / 2;
-                            const x = center + radius * Math.cos(angle);
-                            const y = center + radius * Math.sin(angle);
-                            return (
-                                <line
-                                    key={i}
-                                    x1={center} y1={center} x2={x} y2={y}
-                                    stroke="var(--border)"
-                                    strokeWidth="1"
-                                    strokeDasharray="4,4"
-                                />
-                            );
-                        })}
-
-                        {/* Data polygon */}
-                        <polygon
-                            points={polygonPoints}
-                            fill="rgba(59, 130, 246, 0.2)"
-                            stroke="#3b82f6"
-                            strokeWidth="3"
-                            className="transition-all duration-1000 ease-in-out"
+                {/* Axis lines */}
+                {categories.map((_, i) => {
+                    const angle = (Math.PI * 2 * i) / numPoints - Math.PI / 2;
+                    const x = center + radius * Math.cos(angle);
+                    const y = center + radius * Math.sin(angle);
+                    return (
+                        <line
+                            key={i}
+                            x1={center} y1={center} x2={x} y2={y}
+                            stroke="var(--border)"
+                            strokeWidth="1.5"
+                            className="opacity-60"
                         />
+                    );
+                })}
 
-                        {/* Labels */}
-                        {categories.map((cat, i) => {
-                            const { label, icon } = SKILLS_CONFIG[cat];
-                            const angle = (Math.PI * 2 * i) / numPoints - Math.PI / 2;
-                            const x = center + (radius + 35) * Math.cos(angle);
-                            const y = center + (radius + 20) * Math.sin(angle);
+                {/* Data polygon */}
+                <polygon
+                    points={polygonPoints}
+                    fill="rgba(99, 102, 241, 0.2)"
+                    stroke="rgb(99, 102, 241)"
+                    strokeWidth="3"
+                    className="transition-all duration-1000 ease-in-out drop-shadow-[0_0_8px_rgba(99,102,241,0.3)]"
+                />
 
-                            return (
-                                <g key={cat} className="text-[10px] font-bold">
-                                    <text
-                                        x={x} y={y}
-                                        textAnchor="middle"
-                                        fill="var(--foreground)"
-                                        className="uppercase tracking-tighter"
-                                    >
-                                        {icon} {label}
-                                    </text>
-                                    <text
-                                        x={x} y={y + 12}
-                                        textAnchor="middle"
-                                        fill="var(--accent-primary)"
-                                        className="text-[8px]"
-                                    >
-                                        Lvl {skills[cat].level}
-                                    </text>
-                                </g>
-                            );
-                        })}
-                    </svg>
-                </div>
+                {/* Labels */}
+                {categories.map((cat, i) => {
+                    const { label, icon } = SKILLS_CONFIG[cat];
+                    const angle = (Math.PI * 2 * i) / numPoints - Math.PI / 2;
+                    const x = center + (radius + 45) * Math.cos(angle);
+                    const y = center + (radius + 25) * Math.sin(angle);
 
-                <div className="mt-8 grid grid-cols-5 gap-2 w-full">
-                    {categories.map(cat => (
-                        <div key={cat} className="flex flex-col items-center">
-                            <div
-                                className="w-2 h-2 rounded-full mb-1"
-                                style={{ backgroundColor: SKILLS_CONFIG[cat].color }}
-                            />
-                            <span className="text-[8px] font-black uppercase text-[var(--foreground-muted)]">{SKILLS_CONFIG[cat].label}</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </Card>
+                    // Offset text if it's on the left/right
+                    const textAnchor = Math.abs(Math.cos(angle)) < 0.1 ? "middle" : (Math.cos(angle) > 0 ? "start" : "end");
+
+                    return (
+                        <g key={cat} className="text-[11px] font-black">
+                            <text
+                                x={x} y={y}
+                                textAnchor={textAnchor}
+                                fill="var(--foreground)"
+                                className="uppercase tracking-tighter italic"
+                            >
+                                {icon} {label}
+                            </text>
+                            <text
+                                x={x} y={y + 14}
+                                textAnchor={textAnchor}
+                                fill="rgb(99, 102, 241)"
+                                className="text-[9px] font-bold"
+                            >
+                                LVL {skills[cat].level}
+                            </text>
+                        </g>
+                    );
+                })}
+            </svg>
+        </div>
     );
 }

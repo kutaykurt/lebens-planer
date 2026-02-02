@@ -111,9 +111,12 @@ export default function CalendarPage() {
                             </div>
                             <div>
                                 <h1 className="text-4xl font-black text-[var(--foreground)] tracking-tighter uppercase italic">
-                                    Zeit-<span className="electric-text">Matrix</span>
+                                    <span className="electric-text">Kalender</span>
                                 </h1>
                                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500">Operation: Future Planning</p>
+                                <p className="text-[10px] text-[var(--foreground-muted)] font-medium mt-1">
+                                    Behalte den Überblick über deine Aufgaben und plane vorausschauend.
+                                </p>
                             </div>
                         </div>
                     </div>

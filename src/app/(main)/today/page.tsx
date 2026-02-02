@@ -7,7 +7,7 @@ import {
     ChevronRight, Sparkles, Activity, Target, Clock,
     LayoutGrid, Trash2, Edit3, ArrowUpRight, Brain,
     Coffee, Sun, Moon, Calendar as CalendarIcon,
-    TrendingUp, Trophy, RotateCcw
+    TrendingUp, Trophy, RotateCcw, Heart
 } from 'lucide-react';
 import { PageContainer } from '@/components/layout';
 import { Card, Button, Input, Slider, Textarea, Dialog, DialogFooter, toast } from '@/components/ui';
@@ -33,6 +33,8 @@ export default function TodayPage() {
     const [editingTask, setEditingTask] = useState<Task | null>(null);
     const [showEnergyDialog, setShowEnergyDialog] = useState(false);
     const [viewMode, setViewMode] = useState<'today' | 'week'>('today');
+    const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
+    const [showJournalDialog, setShowJournalDialog] = useState(false);
 
     // Store data
     const tasks = useTodaysTasks();
@@ -49,6 +51,7 @@ export default function TodayPage() {
     const toggleHabitForDate = useLifeOSStore((s) => s.toggleHabitForDate);
     const logEnergy = useLifeOSStore((s) => s.logEnergy);
     const updateWaterIntake = useLifeOSStore((s) => s.updateWaterIntake);
+    const saveDailyLog = useLifeOSStore((s) => s.saveDailyLog);
     const habitLogs = useLifeOSStore((s) => s.habitLogs);
 
     const today = getToday();
@@ -61,6 +64,12 @@ export default function TodayPage() {
 
     // Time-based greeting
     const [greeting, setGreeting] = useState({ text: 'Guten Tag', icon: <Sun className="w-6 h-6" /> });
+
+    const handleDeleteTask = (id: string) => {
+        deleteTask(id);
+        setDeletingTaskId(null);
+        toast.success('Mission aus Log entfernt');
+    };
 
     useEffect(() => {
         const hour = new Date().getHours();
@@ -103,8 +112,11 @@ export default function TodayPage() {
                     <div>
                         <p suppressHydrationWarning className="text-[8px] font-black uppercase tracking-[0.4em] text-indigo-500/60 mb-0.5">{new Intl.DateTimeFormat('de-DE', { weekday: 'long' }).format(new Date()).toUpperCase()}</p>
                         <h1 suppressHydrationWarning className="text-3xl font-black text-[var(--foreground)] tracking-tighter italic uppercase leading-none">
-                            {new Intl.DateTimeFormat('de-DE', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date())}
+                            Tagesfokus
                         </h1>
+                        <p className="text-[10px] text-[var(--foreground-muted)] font-medium mt-1">
+                            Verwalte deine Missionen und Routinen für den heutigen Tag.
+                        </p>
                     </div>
                 </div>
 
@@ -206,10 +218,8 @@ export default function TodayPage() {
                     </div>
                 </Card>
 
-                {/* FOCUS COCKPIT (Col-Span-5) */}
+                {/* COLUMN 2 */}
                 <div className="lg:col-span-5 flex flex-col gap-4">
-                    <FocusCockpit />
-
                     <Card variant="glass" className="flex-1 p-5 rounded-[1.8rem] border-white/5 relative overflow-hidden group">
                         <div className="flex items-center gap-2 mb-3">
                             <Trophy className="w-4 h-4 text-amber-500" />
@@ -252,14 +262,18 @@ export default function TodayPage() {
                     <ArrowUpRight className="w-5 h-5 opacity-20 group-hover:opacity-100 transition-all text-indigo-500" />
                 </Card>
 
-                <Card variant="glass" className="p-4 rounded-2xl border-white/5 flex items-center justify-between group hover:bg-white/10 transition-all cursor-pointer">
+                <Card
+                    variant="glass"
+                    className="p-4 rounded-2xl border-white/5 flex items-center justify-between group hover:bg-white/10 transition-all cursor-pointer"
+                    onClick={() => setShowJournalDialog(true)}
+                >
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 group-hover:scale-110 transition-transform">
                             <Brain className="w-5 h-5" />
                         </div>
                         <div>
                             <p className="text-[8px] font-black uppercase tracking-widest text-indigo-500/60 mb-0.5">Brain Journal</p>
-                            <p className="text-xs font-black italic uppercase tracking-tight">{dailyLog ? 'Synchronisiert' : 'Initialisieren'}</p>
+                            <p className="text-xs font-black italic uppercase tracking-tight">{dailyLog ? 'Synchronisiert' : 'Starten'}</p>
                         </div>
                     </div>
                     <ArrowUpRight className="w-4 h-4 opacity-20 group-hover:opacity-100 transition-all text-indigo-500" />
@@ -370,8 +384,11 @@ export default function TodayPage() {
                                     </div>
 
                                     <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <Button variant="ghost" size="icon" onClick={() => setEditingTask(task)} className="h-8 w-8">
+                                        <Button variant="ghost" size="icon" onClick={() => setEditingTask(task)} className="h-8 w-8 hover:bg-white/10">
                                             <Edit3 className="w-3.5 h-3.5" />
+                                        </Button>
+                                        <Button variant="ghost" size="icon" onClick={() => setDeletingTaskId(task.id)} className="h-8 w-8 hover:bg-rose-500/20 text-rose-500">
+                                            <Trash2 className="w-3.5 h-3.5" />
                                         </Button>
                                     </div>
                                 </div>
@@ -458,6 +475,102 @@ export default function TodayPage() {
                     <DialogFooter>
                         <Button className="w-full h-14 rounded-2xl bg-indigo-500 hover:bg-indigo-600 font-black uppercase tracking-widest shadow-xl shadow-indigo-500/20" onClick={() => setShowEnergyDialog(false)}>
                             Diagnostic complete
+                        </Button>
+                    </DialogFooter>
+                </div>
+            </Dialog>
+
+            <Dialog
+                open={!!deletingTaskId}
+                onClose={() => setDeletingTaskId(null)}
+                title="Mission entfernen?"
+                description="Diese Mission wird dauerhaft aus deinem Log gelöscht."
+            >
+                <DialogFooter>
+                    <Button variant="ghost" onClick={() => setDeletingTaskId(null)}>
+                        Abbrechen
+                    </Button>
+                    <Button variant="destructive" onClick={() => deletingTaskId && handleDeleteTask(deletingTaskId)}>
+                        Löschen
+                    </Button>
+                </DialogFooter>
+            </Dialog>
+
+            {/* ─── BRAIN JOURNAL DIALOG ────────────────────────────────────────── */}
+            <Dialog
+                open={showJournalDialog}
+                onClose={() => setShowJournalDialog(false)}
+                title="Daily Brain Journal"
+                className="max-w-2xl"
+            >
+                <div className="space-y-6 py-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500 flex items-center gap-2">
+                                <Sparkles className="w-3 h-3" /> Fokus des Tages
+                            </label>
+                            <Input
+                                placeholder="Was ist heute am wichtigsten?"
+                                value={dailyLog?.focus || ''}
+                                onChange={(e) => saveDailyLog({ ...dailyLog!, date: today, focus: e.target.value })}
+                                className="bg-white/5 border-white/10"
+                            />
+                        </div>
+                        <div className="space-y-4">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 flex items-center gap-2">
+                                <Trophy className="w-3 h-3" /> Heutiger Win
+                            </label>
+                            <Input
+                                placeholder="Was hast du erreicht?"
+                                value={dailyLog?.win || ''}
+                                onChange={(e) => saveDailyLog({ ...dailyLog!, date: today, win: e.target.value })}
+                                className="bg-white/5 border-white/10"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-500 flex items-center gap-2">
+                            <Heart className="w-3 h-3" /> Dankbarkeit (Neuro-Priming)
+                        </label>
+                        <div className="grid grid-cols-1 gap-2">
+                            {[0, 1, 2].map((i) => (
+                                <Input
+                                    key={i}
+                                    placeholder={`${i + 1}. Ich bin dankbar für...`}
+                                    value={dailyLog?.gratitude?.[i] || ''}
+                                    onChange={(e) => {
+                                        const newGratitude = [...(dailyLog?.gratitude || ['', '', ''])];
+                                        newGratitude[i] = e.target.value;
+                                        saveDailyLog({ ...dailyLog!, date: today, gratitude: newGratitude });
+                                    }}
+                                    className="bg-white/5 border-white/10"
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500 flex items-center gap-2">
+                            <MessageSquare className="w-3 h-3" /> Freie Notizen / Reflexion
+                        </label>
+                        <Textarea
+                            placeholder="Gedanken, Erkenntnisse oder Strategien für morgen..."
+                            value={dailyLog?.notes || ''}
+                            onChange={(e) => saveDailyLog({ ...dailyLog!, date: today, notes: e.target.value })}
+                            className="min-h-[120px] bg-white/5 border-white/10"
+                        />
+                    </div>
+
+                    <DialogFooter>
+                        <Button
+                            className="w-full h-14 rounded-2xl bg-indigo-500 hover:bg-indigo-600 font-black uppercase tracking-widest shadow-xl shadow-indigo-500/20"
+                            onClick={() => {
+                                setShowJournalDialog(false);
+                                toast.success('Brain Journal synchronisiert 🧠');
+                            }}
+                        >
+                            Log synchronisieren
                         </Button>
                     </DialogFooter>
                 </div>

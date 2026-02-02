@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
     Plus, Repeat, Flame, CheckCircle2, Sparkles,
-    Calendar, TrendingUp, Zap, Trophy, Shield, Activity, ChevronRight
+    Calendar, TrendingUp, Zap, Trophy, Shield, Activity, ChevronRight, Trash2
 } from 'lucide-react';
 import { PageContainer } from '@/components/layout';
 import { Card, Button, Dialog, DialogFooter, Input, Select, Textarea, toast } from '@/components/ui';
@@ -42,7 +42,7 @@ function StreakBadge({ streak }: { streak: number }) {
 
 // ─── Habit Card Component ────────────────────────────────────────────────────
 
-function HabitCard({ habit, index }: { habit: Habit; index: number }) {
+function HabitCard({ habit, index, onDelete }: { habit: Habit; index: number; onDelete: (userId: string) => void }) {
     const today = getToday();
     const isCompleted = useIsHabitCompleted(habit.id, today);
     const streak = useHabitStreak(habit.id);
@@ -144,7 +144,21 @@ function HabitCard({ habit, index }: { habit: Habit; index: number }) {
                         </div>
                     </div>
 
-                    <ChevronRight className="hidden sm:block w-8 h-8 text-[var(--foreground-muted)] group-hover:text-indigo-500 group-hover:translate-x-2 transition-all" />
+                    <div className="flex items-center gap-4">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                onDelete(habit.id);
+                            }}
+                            className="w-12 h-12 rounded-2xl hover:bg-rose-500/20 text-rose-500 opacity-0 group-hover:opacity-100 transition-all duration-300"
+                        >
+                            <Trash2 className="w-5 h-5" />
+                        </Button>
+                        <ChevronRight className="hidden sm:block w-8 h-8 text-[var(--foreground-muted)] group-hover:text-indigo-500 group-hover:translate-x-2 transition-all" />
+                    </div>
                 </div>
             </Card>
         </Link>
@@ -182,7 +196,7 @@ function AddHabitDialog({ open, onClose }: { open: boolean; onClose: () => void 
     };
 
     return (
-        <Dialog open={open} onClose={onClose} title="Neue Routine initialisieren">
+        <Dialog open={open} onClose={onClose} title="Neue Routine erstellen">
             <form onSubmit={handleSubmit} className="space-y-6">
                 <Input
                     label="Routine-Identifikation"
@@ -239,8 +253,16 @@ function AddHabitDialog({ open, onClose }: { open: boolean; onClose: () => void 
 
 export default function HabitsPage() {
     const [showAddHabit, setShowAddHabit] = useState(false);
+    const [deletingHabitId, setDeletingHabitId] = useState<string | null>(null);
     const isHydrated = useHydration();
     const activeHabits = useActiveHabits();
+    const deleteHabit = useLifeOSStore((s) => s.deleteHabit);
+
+    const handleDeleteHabit = (id: string) => {
+        deleteHabit(id);
+        setDeletingHabitId(null);
+        toast.success('Routine dauerhaft deaktiviert 🗑️');
+    };
 
     if (!isHydrated) {
         return (
@@ -277,6 +299,9 @@ export default function HabitsPage() {
                                     Consistency-<span className="text-emerald-500">Lab</span>
                                 </h1>
                                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500">Operation: Neural Rewiring</p>
+                                <p className="text-[10px] text-[var(--foreground-muted)] font-medium mt-1">
+                                    Baue durch tägliche Wiederholungen neue, starke Gewohnheiten auf.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -327,18 +352,34 @@ export default function HabitsPage() {
                         size="lg"
                         className="gap-3 bg-emerald-500 hover:bg-emerald-600 text-white px-10 rounded-2xl h-14 shadow-xl shadow-emerald-500/20 font-black uppercase tracking-widest relative z-10"
                     >
-                        <Plus className="w-6 h-6" /> Routine initialisieren
+                        <Plus className="w-6 h-6" /> Routine erstellen
                     </Button>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 gap-4">
                     {activeHabits.map((habit, i) => (
-                        <HabitCard key={habit.id} habit={habit} index={i} />
+                        <HabitCard key={habit.id} habit={habit} index={i} onDelete={setDeletingHabitId} />
                     ))}
                 </div>
             )}
 
             <AddHabitDialog open={showAddHabit} onClose={() => setShowAddHabit(false)} />
+
+            <Dialog
+                open={!!deletingHabitId}
+                onClose={() => setDeletingHabitId(null)}
+                title="Routine löschen?"
+                description="Diese Routine und alle zugehörigen Daten werden dauerhaft aus deinem System entfernt."
+            >
+                <DialogFooter>
+                    <Button variant="ghost" onClick={() => setDeletingHabitId(null)}>
+                        Abbrechen
+                    </Button>
+                    <Button variant="destructive" onClick={() => deletingHabitId && handleDeleteHabit(deletingHabitId)}>
+                        Löschen
+                    </Button>
+                </DialogFooter>
+            </Dialog>
         </PageContainer>
     );
 }

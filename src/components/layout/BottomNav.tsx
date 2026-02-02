@@ -2,16 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Target, Repeat, LayoutGrid, Calendar, Folder } from 'lucide-react';
+import { Home, Rocket, Calendar, Wallet, Brain, Activity, LayoutGrid, Users, Trophy, PenTool } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
-    { href: '/today', label: 'Heute', icon: Home },
-    { href: '/calendar', label: 'Matrix', icon: Calendar },
-    { href: '/projects', label: 'Missionen', icon: Folder },
-    { href: '/goals', label: 'Sektoren', icon: Target },
-    { href: '/habits', label: 'Routinen', icon: Repeat },
-    { href: '/tools', label: 'Zentrale', icon: LayoutGrid },
+    { href: '/dashboard', label: 'Terminal', icon: Rocket },
+    { href: '/finance', label: 'Finanzen', icon: Wallet },
+    { href: '/wiki', label: 'Wiki', icon: Brain },
+    { href: '/notebook', label: 'Notiz', icon: PenTool },
+    { href: '/analytics', label: 'Analytik', icon: Activity },
+    { href: '/challenges', label: 'Herausforderungen', icon: Trophy },
+    { href: '/pixels', label: 'Stimmung', icon: LayoutGrid },
 ];
 
 export function BottomNav() {
@@ -19,9 +20,9 @@ export function BottomNav() {
 
     return (
         <nav suppressHydrationWarning className="fixed bottom-0 left-0 right-0 z-50 safe-bottom no-print">
-            {/* High-tech floating dock container */}
-            <div suppressHydrationWarning className="max-w-xl mx-auto px-4 pb-6">
-                <div suppressHydrationWarning className="relative flex items-center justify-around h-20 px-2 bg-[#0a0a0a] backdrop-blur-3xl border border-white/5 rounded-[2.5rem] shadow-2xl shadow-black overflow-hidden">
+            {/* High-tech floating dock container - Increased width for more items */}
+            <div suppressHydrationWarning className="max-w-3xl mx-auto px-4 pb-6">
+                <div suppressHydrationWarning className="relative flex items-center justify-around h-20 px-4 bg-[#0a0a0a] backdrop-blur-3xl border border-white/5 rounded-[2.5rem] shadow-2xl shadow-black overflow-hidden">
 
                     {/* Background glow effects */}
                     <div className="absolute inset-0 bg-gradient-to-t from-white/5 to-transparent pointer-events-none" />

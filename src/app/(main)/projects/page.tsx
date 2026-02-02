@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {
     Plus, Folder, ChevronRight, Calendar, BarChart3, Clock,
     CheckCircle2, Archive, MoreVertical, Target, Rocket,
-    Briefcase, Sparkles, LayoutGrid, Zap, Activity
+    Briefcase, Sparkles, LayoutGrid, Zap, Activity, Trash2
 } from 'lucide-react';
 import { PageContainer } from '@/components/layout';
 import { Card, Button, Dialog, DialogFooter, Input, Textarea, toast } from '@/components/ui';
@@ -16,7 +16,7 @@ import { TagSelector } from '@/components/features/TagSelector';
 
 // ─── Project Card Component ──────────────────────────────────────────────────
 
-function ProjectCard({ project, index }: { project: Project; index: number }) {
+function ProjectCard({ project, index, onDelete }: { project: Project; index: number; onDelete: (userId: string) => void }) {
     const tags = useLifeOSStore((s) => s.tags);
     const allGoals = useLifeOSStore((s) => s.goals);
     const goals = allGoals.filter(g => g.projectId === project.id);
@@ -143,9 +143,23 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
                     </div>
 
                     {/* Navigation Button */}
-                    <div className="hidden md:flex flex-col justify-center">
-                        <div className="w-12 h-12 rounded-2xl bg-[var(--background-elevated)] border border-[var(--border-subtle)] flex items-center justify-center text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-xl">
-                            <ChevronRight className="w-6 h-6" />
+                    <div className="flex items-center gap-4">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                onDelete(project.id);
+                            }}
+                            className="w-12 h-12 rounded-2xl hover:bg-rose-500/20 text-rose-500 opacity-0 group-hover:opacity-100 transition-all duration-300"
+                        >
+                            <Trash2 className="w-5 h-5" />
+                        </Button>
+                        <div className="hidden md:flex flex-col justify-center">
+                            <div className="w-12 h-12 rounded-2xl bg-[var(--background-elevated)] border border-[var(--border-subtle)] flex items-center justify-center text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-xl">
+                                <ChevronRight className="w-6 h-6" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -180,6 +194,7 @@ function AddProjectDialog({ open, onClose }: { open: boolean; onClose: () => voi
                 description: description.trim() || null,
                 deadline: deadline || null,
                 status: 'active',
+                progress: 0,
                 tagIds: selectedTags,
                 sortOrder: 0,
             });
@@ -234,7 +249,7 @@ function AddProjectDialog({ open, onClose }: { open: boolean; onClose: () => voi
                         Abbrechen
                     </Button>
                     <Button type="submit" disabled={!title.trim()} className="bg-indigo-500 hover:bg-indigo-600 text-white rounded-2xl h-12 shadow-lg shadow-indigo-500/20 font-black uppercase tracking-widest">
-                        Projekt initialisieren
+                        Projekt starten
                     </Button>
                 </DialogFooter>
             </form>
@@ -246,9 +261,17 @@ function AddProjectDialog({ open, onClose }: { open: boolean; onClose: () => voi
 
 export default function ProjectsPage() {
     const [showAddProject, setShowAddProject] = useState(false);
+    const [deletingProjectId, setDeletingProjectId] = useState<string | null>(null);
     const isHydrated = useHydration();
     const allProjects = useLifeOSStore((s) => s.projects);
     const projects = allProjects.filter(p => p.status === 'active');
+    const deleteProject = useLifeOSStore((s) => s.deleteProject);
+
+    const handleDeleteProject = (id: string) => {
+        deleteProject(id);
+        setDeletingProjectId(null);
+        toast.success('System-Mission archiviert & gelöscht 🗑️');
+    };
 
     if (!isHydrated) {
         return (
@@ -287,6 +310,9 @@ export default function ProjectsPage() {
                                     Projekt-<span className="electric-text">Zentrum</span>
                                 </h1>
                                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500">Operation: Structural Growth</p>
+                                <p className="text-[10px] text-[var(--foreground-muted)] font-medium mt-1">
+                                    Bündle deine Aufgaben in klaren Missionen, um große Ziele Schritt für Schritt zu erreichen.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -343,12 +369,28 @@ export default function ProjectsPage() {
             ) : (
                 <div className="grid grid-cols-1 gap-4">
                     {projects.map((project, i) => (
-                        <ProjectCard key={project.id} project={project} index={i} />
+                        <ProjectCard key={project.id} project={project} index={i} onDelete={setDeletingProjectId} />
                     ))}
                 </div>
             )}
 
             <AddProjectDialog open={showAddProject} onClose={() => setShowAddProject(false)} />
+
+            <Dialog
+                open={!!deletingProjectId}
+                onClose={() => setDeletingProjectId(null)}
+                title="Mission löschen?"
+                description="Diese Mission und alle assoziierten Ziele werden dauerhaft aus deinem System entfernt."
+            >
+                <DialogFooter>
+                    <Button variant="ghost" onClick={() => setDeletingProjectId(null)}>
+                        Abbrechen
+                    </Button>
+                    <Button variant="destructive" onClick={() => deletingProjectId && handleDeleteProject(deletingProjectId)}>
+                        Löschen
+                    </Button>
+                </DialogFooter>
+            </Dialog>
         </PageContainer>
     );
 }

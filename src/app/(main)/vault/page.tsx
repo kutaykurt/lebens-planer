@@ -30,6 +30,7 @@ export default function MediaVaultPage() {
     const [search, setSearch] = useState('');
     const [typeFilter, setTypeFilter] = useState<MediaType | 'all'>('all');
     const [showAdd, setShowAdd] = useState(false);
+    const [deletingMediaId, setDeletingMediaId] = useState<string | null>(null);
 
     // Form state
     const [title, setTitle] = useState('');
@@ -114,7 +115,7 @@ export default function MediaVaultPage() {
                                         <h3 className="font-bold text-[var(--foreground)] truncate">{item.title}</h3>
                                         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button
-                                                onClick={() => deleteMediaItem(item.id)}
+                                                onClick={() => setDeletingMediaId(item.id)}
                                                 className="p-1 hover:text-red-500 text-[var(--foreground-muted)]"
                                             >
                                                 <Trash2 className="w-4 h-4" />
@@ -186,6 +187,23 @@ export default function MediaVaultPage() {
                     </DialogFooter>
                 </form>
             </Dialog>
-        </PageContainer>
+
+            <Dialog
+                open={!!deletingMediaId}
+                onClose={() => setDeletingMediaId(null)}
+                title="Medium löschen?"
+                description="Möchtest du dieses Medium wirklich aus deinem Vault entfernen?"
+            >
+                <DialogFooter>
+                    <Button variant="ghost" onClick={() => setDeletingMediaId(null)}>Abbrechen</Button>
+                    <Button variant="destructive" onClick={() => {
+                        if (deletingMediaId) {
+                            deleteMediaItem(deletingMediaId);
+                            setDeletingMediaId(null);
+                        }
+                    }}>Löschen</Button>
+                </DialogFooter>
+            </Dialog>
+        </PageContainer >
     );
 }

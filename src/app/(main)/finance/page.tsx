@@ -30,6 +30,7 @@ export default function FinancePage() {
     const [amount, setAmount] = useState('');
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState(CATEGORIES[0]);
+    const [deletingTransactionId, setDeletingTransactionId] = useState<string | null>(null);
 
     // Stats
     const stats = useMemo(() => {
@@ -112,9 +113,12 @@ export default function FinancePage() {
                             </div>
                             <div>
                                 <h1 className="text-5xl font-black text-[var(--foreground)] tracking-tighter uppercase italic bg-clip-text text-transparent bg-gradient-to-r from-[var(--foreground)] to-[var(--foreground-muted)]">
-                                    Capital-<span className="text-emerald-500">Node</span>
+                                    Finanz-<span className="text-emerald-500">Zentrale</span>
                                 </h1>
-                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500">Operation: Wealth Accumulation</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500">Operation: Vermögensaufbau</p>
+                                <p className="text-[10px] text-[var(--foreground-muted)] font-medium mt-1">
+                                    Behalte die Kontrolle über deine Finanzen und verwalte dein Budget effizient.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -122,7 +126,7 @@ export default function FinancePage() {
                     <div className="flex items-center gap-4">
                         <Button onClick={() => setShowAdd(true)} className="h-20 px-10 rounded-[2rem] bg-emerald-500 hover:bg-emerald-600 text-white flex flex-col items-center justify-center group shadow-2xl shadow-emerald-500/20">
                             <Plus className="w-8 h-8 group-hover:rotate-90 transition-transform duration-500" />
-                            <span className="text-[11px] font-black uppercase tracking-[0.2em] mt-1">Add Entry</span>
+                            <span className="text-[11px] font-black uppercase tracking-[0.2em] mt-1">Eintrag hinzufügen</span>
                         </Button>
                     </div>
                 </div>
@@ -130,37 +134,37 @@ export default function FinancePage() {
 
             {/* Overview Section */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12">
-                {/* Balance Card */}
-                <Card variant="glass" className="md:col-span-6 p-10 bg-gradient-to-br from-indigo-500 to-purple-600 border-none text-white rounded-[3.5rem] relative overflow-hidden group shadow-2xl shadow-indigo-500/20">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none" />
+                {/* Balance Card - Premium White Design */}
+                <Card variant="default" className="md:col-span-6 p-10 bg-[var(--background-surface)] border-[var(--border)] text-[var(--foreground)] rounded-[3.5rem] relative overflow-hidden group shadow-2xl shadow-black/5 min-h-[320px] flex flex-col justify-center">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none" />
                     <div className="relative z-10">
-                        <div className="flex items-center gap-2 mb-2 opacity-70">
-                            <Shield className="w-4 h-4" />
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em]">Net Worth Status</p>
+                        <div className="flex items-center gap-2 mb-2 opacity-60">
+                            <Shield className="w-4 h-4 text-indigo-500" />
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--foreground-muted)]">Net Worth Status</p>
                         </div>
-                        <h2 className="text-6xl font-black tracking-tighter mb-8 italic">{balance.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}</h2>
+                        <h2 className="text-6xl font-black tracking-tighter mb-8 italic text-[var(--foreground)]">{balance.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}</h2>
                         <div className="flex items-center gap-8">
                             <div>
-                                <p className="text-[9px] font-black uppercase tracking-widest opacity-60 mb-1">Growth Index</p>
-                                <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-2xl backdrop-blur-md">
-                                    <TrendingUp className="w-4 h-4" />
-                                    <span className="text-xs font-black">+4.2%</span>
+                                <p className="text-[9px] font-black uppercase tracking-widest text-[var(--foreground-muted)] mb-1">Growth Index</p>
+                                <div className="flex items-center gap-2 bg-[var(--background-elevated)] px-4 py-2 rounded-2xl border border-[var(--border-subtle)]">
+                                    <TrendingUp className="w-4 h-4 text-emerald-500" />
+                                    <span className="text-xs font-black text-[var(--foreground)]">+4.2%</span>
                                 </div>
                             </div>
                             <div>
-                                <p className="text-[9px] font-black uppercase tracking-widest opacity-60 mb-1">Risk Factor</p>
-                                <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-2xl backdrop-blur-md">
-                                    <Zap className="w-4 h-4" />
-                                    <span className="text-xs font-black">MINIMAL</span>
+                                <p className="text-[9px] font-black uppercase tracking-widest text-[var(--foreground-muted)] mb-1">Risk Factor</p>
+                                <div className="flex items-center gap-2 bg-[var(--background-elevated)] px-4 py-2 rounded-2xl border border-[var(--border-subtle)]">
+                                    <Zap className="w-4 h-4 text-amber-500" />
+                                    <span className="text-xs font-black text-[var(--foreground)]">MINIMAL</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </Card>
 
-                {/* Monthly Income/Expense Cards */}
+                {/* Monthly Income/Expense Cards - Using variant='default' to allow background override */}
                 <div className="md:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-8">
-                    <Card variant="glass" className="p-8 rounded-[2.5rem] border-white/10 bg-white/5 flex flex-col justify-between group">
+                    <Card variant="default" className="p-8 rounded-[2.5rem] border-[var(--border)] bg-[var(--background-surface)] shadow-xl flex flex-col justify-between group">
                         <div className="space-y-4">
                             <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
                                 <ArrowUpRight className="w-6 h-6" />
@@ -178,7 +182,7 @@ export default function FinancePage() {
                         </div>
                     </Card>
 
-                    <Card variant="glass" className="p-8 rounded-[2.5rem] border-white/10 bg-white/5 flex flex-col justify-between group">
+                    <Card variant="default" className="p-8 rounded-[2.5rem] border-[var(--border)] bg-[var(--background-surface)] shadow-xl flex flex-col justify-between group">
                         <div className="space-y-4">
                             <div className="w-12 h-12 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500">
                                 <ArrowDownLeft className="w-6 h-6" />
@@ -216,45 +220,59 @@ export default function FinancePage() {
                     </div>
 
                     <div className="space-y-4">
-                        {transactions.slice().sort((a, b) => b.date.localeCompare(a.date)).map(t => (
-                            <Card key={t.id} variant="glass" className="p-6 rounded-[2rem] border-white/10 bg-white/5 hover:bg-white/10 transition-all group/item">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-5">
-                                        <div className={cn(
-                                            "w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-lg",
-                                            t.type === 'income' ? "bg-emerald-500 text-white" : "bg-rose-500 text-white"
-                                        )}>
-                                            {t.type === 'income' ? <ArrowUpRight className="w-7 h-7" /> : <ArrowDownLeft className="w-7 h-7" />}
-                                        </div>
-                                        <div>
-                                            <h4 className="text-lg font-black tracking-tight uppercase italic">{t.title}</h4>
-                                            <div className="flex items-center gap-3">
-                                                <span className="text-[10px] font-black uppercase tracking-widest text-indigo-500 bg-indigo-500/10 px-2 py-0.5 rounded-lg border border-indigo-500/10">{t.category}</span>
-                                                <span className="text-[10px] font-black uppercase tracking-widest text-[var(--foreground-muted)] opacity-60">{t.date}</span>
+                        {transactions.length === 0 ? (
+                            <div
+                                onClick={() => setShowAdd(true)}
+                                className="py-24 text-center border-2 border-dashed border-[var(--border)] rounded-[3rem] opacity-40 hover:opacity-100 hover:border-emerald-500/50 transition-all cursor-pointer group"
+                            >
+                                <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                    <Plus className="w-8 h-8" />
+                                </div>
+                                <h3 className="text-sm font-black uppercase tracking-widest mb-2 italic text-[var(--foreground)]">Noch keine Daten vorhanden</h3>
+                                <p className="text-[10px] font-bold text-[var(--foreground-secondary)] uppercase tracking-[0.2em]">Erfasse oben deinen ersten Finanz-Eintrag,</p>
+                                <p className="text-[10px] font-bold text-[var(--foreground-secondary)] uppercase tracking-[0.2em]">um den Log zu starten.</p>
+                            </div>
+                        ) : (
+                            transactions.slice().sort((a, b) => b.date.localeCompare(a.date)).map(t => (
+                                <Card key={t.id} variant="glass" className="p-6 rounded-[2rem] border-white/10 bg-white/5 hover:bg-white/10 transition-all group/item">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-5">
+                                            <div className={cn(
+                                                "w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-lg",
+                                                t.type === 'income' ? "bg-emerald-500 text-white" : "bg-rose-500 text-white"
+                                            )}>
+                                                {t.type === 'income' ? <ArrowUpRight className="w-7 h-7" /> : <ArrowDownLeft className="w-7 h-7" />}
+                                            </div>
+                                            <div>
+                                                <h4 className="text-lg font-black tracking-tight uppercase italic">{t.title}</h4>
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-indigo-500 bg-indigo-500/10 px-2 py-0.5 rounded-lg border border-indigo-500/10">{t.category}</span>
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-[var(--foreground-muted)] opacity-60">{t.date}</span>
+                                                </div>
                                             </div>
                                         </div>
+                                        <div className="flex items-center gap-6">
+                                            <span className={cn("text-xl font-black italic tracking-tighter", t.type === 'income' ? "text-emerald-500" : "text-[var(--foreground)]")}>
+                                                {t.type === 'income' ? '+' : '-'} {t.amount.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+                                            </span>
+                                            <button
+                                                onClick={() => setDeletingTransactionId(t.id)}
+                                                className="opacity-0 group-hover/item:opacity-100 p-3 hover:bg-rose-500 text-rose-500 hover:text-white rounded-2xl transition-all"
+                                            >
+                                                <Trash2 className="w-5 h-5" />
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-6">
-                                        <span className={cn("text-xl font-black italic tracking-tighter", t.type === 'income' ? "text-emerald-500" : "text-[var(--foreground)]")}>
-                                            {t.type === 'income' ? '+' : '-'} {t.amount.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
-                                        </span>
-                                        <button
-                                            onClick={() => deleteTransaction(t.id)}
-                                            className="opacity-0 group-hover/item:opacity-100 p-3 hover:bg-rose-500 text-rose-500 hover:text-white rounded-2xl transition-all"
-                                        >
-                                            <Trash2 className="w-5 h-5" />
-                                        </button>
-                                    </div>
-                                </div>
-                            </Card>
-                        ))}
+                                </Card>
+                            ))
+                        )}
                     </div>
                 </div>
 
                 {/* Distributions */}
                 <div className="lg:col-span-4 space-y-8">
                     <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
-                        <PieChart className="w-6 h-6 text-amber-500" /> Budget-Matrix
+                        <PieChart className="w-6 h-6 text-amber-500" /> Budget-Übersicht
                     </h2>
 
                     <Card variant="glass" className="p-8 rounded-[3rem] border-white/10 bg-white/5">
@@ -306,7 +324,7 @@ export default function FinancePage() {
             </div>
 
             {/* Transaction Dialog */}
-            <Dialog open={showAdd} onClose={() => setShowAdd(false)} title="Buchung initialisieren">
+            <Dialog open={showAdd} onClose={() => setShowAdd(false)} title="Neue Buchung erfassen">
                 <form onSubmit={handleAdd} className="space-y-8">
                     <div className="flex bg-[var(--background-elevated)] p-1.5 rounded-[2rem] border border-[var(--border)] shadow-inner">
                         <button
@@ -344,7 +362,7 @@ export default function FinancePage() {
                             required
                         />
                         <Select
-                            label="Sektor-ID"
+                            label="Kategorie"
                             options={CATEGORIES.map(c => ({ value: c, label: c }))}
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
@@ -376,6 +394,27 @@ export default function FinancePage() {
                         </Button>
                     </DialogFooter>
                 </form>
+            </Dialog>
+
+            <Dialog
+                open={!!deletingTransactionId}
+                onClose={() => setDeletingTransactionId(null)}
+                title="Transaktion löschen?"
+                description="Möchtest du diesen Finanz-Eintrag wirklich dauerhaft aus deinem Log entfernen?"
+            >
+                <DialogFooter>
+                    <Button variant="ghost" onClick={() => setDeletingTransactionId(null)}>
+                        Abbrechen
+                    </Button>
+                    <Button variant="destructive" onClick={() => {
+                        if (deletingTransactionId) {
+                            deleteTransaction(deletingTransactionId);
+                            setDeletingTransactionId(null);
+                        }
+                    }}>
+                        Löschen
+                    </Button>
+                </DialogFooter>
             </Dialog>
         </PageContainer>
     );

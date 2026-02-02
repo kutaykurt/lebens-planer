@@ -21,7 +21,7 @@ import {
     Edit3
 } from 'lucide-react';
 import { PageContainer } from '@/components/layout';
-import { Card, Button, Input, toast } from '@/components/ui';
+import { Card, Button, Input, toast, Dialog, DialogFooter } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { useContacts } from '@/stores/selectors';
 import { useLifeOSStore } from '@/stores/lifeOSStore';
@@ -52,6 +52,7 @@ export default function SocialPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<ContactCategory | 'all'>('all');
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+    const [deletingContact, setDeletingContact] = useState<{ id: string; name: string } | null>(null);
 
     const filteredContacts = contacts.filter(c => {
         const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -69,11 +70,10 @@ export default function SocialPage() {
         toast.success(`Interaktion für ${name} geloggt! 📈`);
     };
 
-    const handleDelete = (id: string, name: string) => {
-        if (confirm(`${name} wirklich löschen?`)) {
-            deleteContact(id);
-            toast.error('Kontakt gelöscht.');
-        }
+    const handleDelete = (id: string) => {
+        deleteContact(id);
+        setDeletingContact(null);
+        toast.error('Kontakt gelöscht.');
     };
 
     return (
@@ -194,7 +194,7 @@ export default function SocialPage() {
 
                                         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button
-                                                onClick={() => handleDelete(contact.id, contact.name)}
+                                                onClick={() => setDeletingContact({ id: contact.id, name: contact.name })}
                                                 className="p-2 rounded-xl hover:bg-rose-500/10 text-rose-500 transition-colors"
                                                 title="Löschen"
                                             >
@@ -273,6 +273,22 @@ export default function SocialPage() {
                 isOpen={isAddDialogOpen}
                 onClose={() => setIsAddDialogOpen(false)}
             />
+
+            <Dialog
+                open={!!deletingContact}
+                onClose={() => setDeletingContact(null)}
+                title="Kontakt löschen?"
+                description={`Möchtest du ${deletingContact?.name} wirklich aus deinem Netzwerk entfernen?`}
+            >
+                <DialogFooter>
+                    <Button variant="ghost" onClick={() => setDeletingContact(null)}>
+                        Abbrechen
+                    </Button>
+                    <Button variant="destructive" onClick={() => deletingContact && handleDelete(deletingContact.id)}>
+                        Löschen
+                    </Button>
+                </DialogFooter>
+            </Dialog>
         </PageContainer>
     );
 }

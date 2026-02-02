@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {
     Plus, Target, ChevronRight, Sparkles, Trophy, Rocket,
     Heart, Briefcase, BookOpen, DollarSign, Star, Compass,
-    Shield, Zap, Activity, LayoutGrid
+    Shield, Zap, Activity, LayoutGrid, Trash2
 } from 'lucide-react';
 import { PageContainer } from '@/components/layout';
 import { Card, Button, Dialog, DialogFooter, Input, Select, Textarea, toast } from '@/components/ui';
@@ -28,7 +28,7 @@ const CATEGORY_CONFIG: Record<GoalCategory, { icon: any; color: string; gradient
 
 // ─── Goal Card Component ─────────────────────────────────────────────────────
 
-function GoalCard({ goal, index }: { goal: Goal; index: number }) {
+function GoalCard({ goal, index, onDelete }: { goal: Goal; index: number; onDelete: (userId: string) => void }) {
     const config = CATEGORY_CONFIG[goal.category];
     const Icon = config.icon;
 
@@ -113,9 +113,23 @@ function GoalCard({ goal, index }: { goal: Goal; index: number }) {
                         </div>
                     </div>
 
-                    <div className="hidden md:flex flex-col justify-center">
-                        <div className="w-12 h-12 rounded-2xl bg-[var(--background-elevated)] border border-[var(--border-subtle)] flex items-center justify-center text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-xl">
-                            <ChevronRight className="w-6 h-6" />
+                    <div className="flex items-center gap-4">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                onDelete(goal.id);
+                            }}
+                            className="w-12 h-12 rounded-2xl hover:bg-rose-500/20 text-rose-500 opacity-0 group-hover:opacity-100 transition-all duration-300"
+                        >
+                            <Trash2 className="w-5 h-5" />
+                        </Button>
+                        <div className="hidden md:flex flex-col justify-center">
+                            <div className="w-12 h-12 rounded-2xl bg-[var(--background-elevated)] border border-[var(--border-subtle)] flex items-center justify-center text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-xl">
+                                <ChevronRight className="w-6 h-6" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -154,6 +168,7 @@ function AddGoalDialog({ open, onClose }: { open: boolean; onClose: () => void }
                 category,
                 timeHorizon,
                 status: 'active',
+                progress: 0,
                 projectId: projectId || null,
                 tagIds: selectedTags,
             });
@@ -169,7 +184,7 @@ function AddGoalDialog({ open, onClose }: { open: boolean; onClose: () => void }
     };
 
     return (
-        <Dialog open={open} onClose={onClose} title="Sektor-Ziel initialisieren">
+        <Dialog open={open} onClose={onClose} title="Sektor-Ziel festlegen">
             <form onSubmit={handleSubmit} className="space-y-6">
                 <Input
                     label="Ziel-Bezeichnung"
@@ -241,8 +256,16 @@ function AddGoalDialog({ open, onClose }: { open: boolean; onClose: () => void }
 
 export default function GoalsPage() {
     const [showAddGoal, setShowAddGoal] = useState(false);
+    const [deletingGoalId, setDeletingGoalId] = useState<string | null>(null);
     const isHydrated = useHydration();
     const activeGoals = useActiveGoals();
+    const deleteGoal = useLifeOSStore((s) => s.deleteGoal);
+
+    const handleDeleteGoal = (id: string) => {
+        deleteGoal(id);
+        setDeletingGoalId(null);
+        toast.success('Ziel-Vorgabe aus Sektor entfernt 🗑️');
+    };
 
     if (!isHydrated) {
         return (
@@ -273,6 +296,9 @@ export default function GoalsPage() {
                                     North-<span className="text-purple-500">Star</span>
                                 </h1>
                                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-purple-500">Operation: Future Vision</p>
+                                <p className="text-[10px] text-[var(--foreground-muted)] font-medium mt-1">
+                                    Definiere deine langfristige Vision und verfolge deinen Fortschritt in verschiedenen Lebensbereichen.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -323,18 +349,34 @@ export default function GoalsPage() {
                         size="lg"
                         className="gap-3 bg-purple-500 hover:bg-purple-600 text-white px-10 rounded-2xl h-14 shadow-xl shadow-purple-500/20 font-black uppercase tracking-widest relative z-10"
                     >
-                        <Plus className="w-6 h-6" /> Vision initialisieren
+                        <Plus className="w-6 h-6" /> Vision festlegen
                     </Button>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 gap-4">
                     {activeGoals.map((goal, i) => (
-                        <GoalCard key={goal.id} goal={goal} index={i} />
+                        <GoalCard key={goal.id} goal={goal} index={i} onDelete={setDeletingGoalId} />
                     ))}
                 </div>
             )}
 
             <AddGoalDialog open={showAddGoal} onClose={() => setShowAddGoal(false)} />
+
+            <Dialog
+                open={!!deletingGoalId}
+                onClose={() => setDeletingGoalId(null)}
+                title="Ziel löschen?"
+                description="Dieses Ziel und alle assoziierten Fortschritte werden dauerhaft gelöscht."
+            >
+                <DialogFooter>
+                    <Button variant="ghost" onClick={() => setDeletingGoalId(null)}>
+                        Abbrechen
+                    </Button>
+                    <Button variant="destructive" onClick={() => deletingGoalId && handleDeleteGoal(deletingGoalId)}>
+                        Löschen
+                    </Button>
+                </DialogFooter>
+            </Dialog>
         </PageContainer>
     );
 }

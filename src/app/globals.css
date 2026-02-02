@@ -206,15 +206,15 @@
 /* ─── Font Sizes ──────────────────────────────────────────────────────────── */
 
 [data-font-size="small"] {
-  font-size: 13px;
+  font-size: 14px;
 }
 
 [data-font-size="medium"] {
-  font-size: 15px;
+  font-size: 16px;
 }
 
 [data-font-size="large"] {
-  font-size: 18px;
+  font-size: 19px;
 }
 
 /* ─── Compact Mode ────────────────────────────────────────────────────────── */
@@ -259,7 +259,7 @@ html {
 
 body {
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.6;
   color: var(--foreground);
   background: var(--background);
@@ -781,7 +781,7 @@ p {
   font-weight: 600;
   padding: 4px 12px;
   border-radius: var(--radius-full);
-  font-size: 13px;
+  font-size: 14px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
