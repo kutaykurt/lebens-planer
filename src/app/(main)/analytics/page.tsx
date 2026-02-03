@@ -144,7 +144,9 @@ export default function AnalyticsPage() {
                         </Card>
                         <Card variant="glass" className="p-4 md:p-5 rounded-[2rem] border-purple-500/10 bg-purple-500/5 backdrop-blur-xl flex flex-col items-center justify-center text-center">
                             <p className="text-[9px] font-black uppercase tracking-widest text-purple-500 mb-1">Score</p>
-                            <p className="text-2xl md:text-3xl font-black tracking-tighter text-glow-indigo">8.4</p>
+                            <p className="text-2xl md:text-3xl font-black tracking-tighter text-glow-indigo">
+                                {((Number(stats.taskSuccessRate) * 0.6) + (Number(stats.avgEnergy) * 2 * 0.4)).toFixed(1)}
+                            </p>
                         </Card>
                     </div>
                 </div>
@@ -189,8 +191,8 @@ export default function AnalyticsPage() {
                         })}
                     </div>
 
-                    {/* Quarterly Report */}
-                    <Card variant="glass" className="p-10 bg-indigo-50 rounded-[3rem] relative overflow-hidden group">
+                    {/* Monthly Summary */}
+                    <Card variant="glass" className="p-10 bg-indigo-50/30 rounded-[3rem] border border-indigo-100 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-indigo-500/10 transition-colors" />
 
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-10">
@@ -198,41 +200,40 @@ export default function AnalyticsPage() {
                                 <div>
                                     <div className="flex items-center gap-2 mb-2">
                                         <div className="w-1.5 h-4 bg-indigo-500 rounded-full" />
-                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500">Quartals-Protokoll</span>
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600">Performance-Analyse</span>
                                     </div>
-                                    <h3 className="text-4xl font-black text-[var(--foreground)] tracking-tighter uppercase italic leading-none">Status: <span className="text-emerald-500 text-glow-emerald">Höchstform</span></h3>
+                                    <h3 className="text-4xl font-black text-[var(--foreground)] tracking-tighter uppercase italic leading-none">Status: <span className="text-emerald-600">{Number(stats.taskSuccessRate) > 70 ? 'Hervorragend' : 'Auf Kurs'}</span></h3>
                                 </div>
                                 <div className="grid grid-cols-2 gap-10">
                                     <div className="space-y-1">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-[var(--foreground-muted)]">Produktivität</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-[var(--foreground-muted)]">Aufgaben-Volumen</p>
                                         <div className="flex items-center gap-2">
                                             <TrendingUp className="w-5 h-5 text-emerald-500" />
-                                            <span className="text-3xl font-black tracking-tighter">+{quarterlyReport.taskGrowth}%</span>
+                                            <span className="text-3xl font-black tracking-tighter">{stats.completedTasks} erledigt</span>
                                         </div>
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-[var(--foreground-muted)]">Top Skill</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-[var(--foreground-muted)]">Finanz-Status</p>
                                         <div className="flex items-center gap-2">
-                                            <Award className="w-5 h-5 text-amber-500" />
-                                            <span className="text-3xl font-black tracking-tighter">Elite</span>
+                                            <Wallet className="w-5 h-5 text-indigo-500" />
+                                            <span className="text-3xl font-black tracking-tighter">
+                                                {transactions.reduce((acc, t) => acc + (t.type === 'income' ? t.amount : -t.amount), 0).toFixed(0)}€
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="flex flex-col gap-4 min-w-[200px]">
-                                <Card variant="glass" className="p-4 bg-white/5 border-none shadow-xl rounded-2xl flex items-center gap-3">
+                                <Card variant="glass" className="p-4 bg-white/40 border border-indigo-100 shadow-sm rounded-2xl flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500">
                                         <Flame className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <p className="text-[9px] font-black uppercase tracking-widest text-[var(--foreground-muted)]">Hot Streak</p>
-                                        <p className="text-sm font-bold truncate">{quarterlyReport.topHabit}</p>
+                                        <p className="text-[9px] font-black uppercase tracking-widest text-[var(--foreground-muted)]">Aktive Habits</p>
+                                        <p className="text-sm font-bold truncate">{useLifeOSStore.getState().habits.filter(h => h.isActive && !h.isArchived).length} Tracker</p>
                                     </div>
                                 </Card>
-                                <Button className="h-14 px-8 rounded-2xl bg-indigo-500 hover:bg-indigo-600 text-white font-black uppercase tracking-widest text-xs shadow-lg shadow-indigo-500/20 group">
-                                    Fokus optimieren <ArrowUpRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                                </Button>
                             </div>
                         </div>
                     </Card>
@@ -249,34 +250,24 @@ export default function AnalyticsPage() {
                         <WheelOfLife />
                     </Card>
 
-                    <Card variant="glass" className="p-8 rounded-[2.5rem] border-white/10 bg-white/5 shadow-xl">
+                    <Card variant="glass" className="p-8 rounded-[2.5rem] border-white/10 bg-[var(--background-elevated)] shadow-xl">
                         <h3 className="text-sm font-black uppercase tracking-[0.2em] text-indigo-500 mb-6 flex items-center gap-2">
-                            <TrendingUp className="w-4 h-4" /> Dynamik (30 Tage)
+                            <TrendingUp className="w-4 h-4" /> Aufgaben-Trend
                         </h3>
-                        <div className="flex items-end gap-1.5 h-40">
-                            {stats.tasksLast30Days.map((count, i) => {
-                                const max = Math.max(...stats.tasksLast30Days, 5);
-                                const height = (count / max) * 100;
-                                return (
-                                    <div
-                                        key={i}
-                                        className="flex-1 group relative transition-all duration-500"
-                                        style={{ height: `${height}%` }}
-                                    >
-                                        <div className={cn(
-                                            "absolute inset-0 rounded-full transition-all duration-500",
-                                            count === 0 ? "bg-[var(--border)] opacity-20" : "bg-indigo-500 group-hover:scale-x-125"
-                                        )} />
-                                        <div className="opacity-0 group-hover:opacity-100 absolute -top-10 left-1/2 -translate-x-1/2 bg-[var(--background-surface)] border border-[var(--border)] text-[9px] font-black px-3 py-1.5 rounded-xl pointer-events-none whitespace-nowrap z-20 shadow-xl transition-all">
-                                            {count} OPS
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                        <div className="flex justify-between mt-4">
-                            <span className="text-[8px] font-black uppercase tracking-widest text-[var(--foreground-muted)] opacity-50">T-30 Days</span>
-                            <span className="text-[8px] font-black uppercase tracking-widest text-indigo-500">Live Status</span>
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center">
+                                <span className="text-xs font-bold uppercase text-[var(--foreground-secondary)]">Erledigt</span>
+                                <span className="text-lg font-black text-indigo-600">{stats.completedTasks} / {stats.totalTasks}</span>
+                            </div>
+                            <div className="h-4 rounded-full bg-[var(--background-surface)] overflow-hidden border border-[var(--border)]">
+                                <div
+                                    className="h-full bg-indigo-500 transition-all duration-1000 shadow-[0_0_15px_rgba(99,102,241,0.3)]"
+                                    style={{ width: `${stats.taskSuccessRate}%` }}
+                                />
+                            </div>
+                            <p className="text-[10px] text-[var(--foreground-muted)] italic leading-relaxed">
+                                Du hast bisher {stats.taskSuccessRate}% aller erfassten Aufgaben erfolgreich abgeschlossen.
+                            </p>
                         </div>
                     </Card>
                 </div>
@@ -284,37 +275,34 @@ export default function AnalyticsPage() {
 
             {/* Bottom Grid: Distributions & Consistency */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-32">
-                <Card variant="glass" className="p-8 rounded-[3rem] border-white/10 bg-white/5">
+                <Card variant="glass" className="p-8 rounded-[3rem] border-white/10 bg-[var(--background-elevated)]">
                     <h3 className="text-sm font-black uppercase tracking-[0.2em] text-indigo-500 mb-8 flex items-center gap-2">
-                        <LayoutGrid className="w-4 h-4" /> Ziele-Verteilung
+                        <LayoutGrid className="w-4 h-4" /> Projekt-Fortschritt
                     </h3>
                     <div className="space-y-6">
-                        {Object.entries(stats.tasksByCategory)
-                            .sort(([, a], [, b]) => b - a)
-                            .map(([category, count]) => {
-                                const percentage = (count / stats.totalTasks) * 100;
-                                const colorClass = category === 'health' ? 'bg-rose-500 shadow-rose-500/30' :
-                                    category === 'career' ? 'bg-blue-500 shadow-blue-500/30' :
-                                        category === 'finance' ? 'bg-emerald-500 shadow-emerald-500/30' :
-                                            category === 'learning' ? 'bg-amber-500 shadow-amber-500/30' :
-                                                category === 'inbox' ? 'bg-slate-400 opacity-50' :
-                                                    'bg-indigo-500 shadow-indigo-500/30';
+                        {goals.slice(0, 4).map(goal => {
+                            const projectTasks = tasks.filter(t => t.goalId === goal.id);
+                            const completedProjectTasks = projectTasks.filter(t => t.status === 'completed');
+                            const progress = projectTasks.length > 0 ? (completedProjectTasks.length / projectTasks.length) * 100 : 0;
 
-                                return (
-                                    <div key={category} className="group cursor-default">
-                                        <div className="flex justify-between text-[11px] font-black mb-2 uppercase tracking-wide">
-                                            <span className="text-[var(--foreground)]">{category === 'inbox' ? '📥 Puffer' : category}</span>
-                                            <span className="text-indigo-500">{percentage.toFixed(0)}%</span>
-                                        </div>
-                                        <div className="h-3 rounded-full bg-[var(--background-elevated)] overflow-hidden shadow-inner">
-                                            <div
-                                                className={cn("h-full transition-all duration-1000 ease-out shadow-lg", colorClass)}
-                                                style={{ width: `${percentage}%` }}
-                                            />
-                                        </div>
+                            return (
+                                <div key={goal.id} className="group">
+                                    <div className="flex justify-between text-[11px] font-black mb-2 uppercase tracking-wide">
+                                        <span className="text-[var(--foreground)] truncate max-w-[70%]">{goal.title}</span>
+                                        <span className="text-indigo-500">{progress.toFixed(0)}%</span>
                                     </div>
-                                );
-                            })}
+                                    <div className="h-3 rounded-full bg-[var(--background-surface)] overflow-hidden border border-[var(--border)]">
+                                        <div
+                                            className="h-full bg-indigo-500 transition-all duration-1000 ease-out shadow-lg"
+                                            style={{ width: `${progress}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            );
+                        })}
+                        {goals.length === 0 && (
+                            <p className="text-xs text-[var(--foreground-muted)] italic text-center py-10">Keine aktiven Projekte gefunden.</p>
+                        )}
                     </div>
                 </Card>
 

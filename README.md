@@ -22,15 +22,6 @@ Der Lebensplaner ist mehr als nur eine To-Do-Liste. Er ist dein digitaler Rückz
 
 ---
 
-## 🎨 Design-Philosophie
-
-Wir glauben an **Fokus durch Klarheit**. Deshalb verzichtet der Lebensplaner bewusst auf ablenkende Animationen und künstliche Farbverläufe.
-
-- **Klare Kanten:** Solide Farben statt glänzender Verläufe.
-- **Sanfte Kontraste:** Indigo und neutrale Töne für eine beruhigende Arbeitsumgebung.
-- **Intuitive Navigation:** Eine strukturierte Benutzeroberfläche, die dich nicht überfordert.
-
----
 
 ## 🛠 Tech Stack
 
