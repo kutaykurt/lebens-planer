@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, memo } from 'react';
+import { useState, useEffect, useMemo, memo, useRef } from 'react';
 import { PageContainer } from '@/components/layout';
 import { useLifeOSStore, useHydration } from '@/stores';
 import { cn } from '@/lib/utils';
@@ -33,8 +33,8 @@ const NotebookStyles = () => (
         }
 
         .notebook-font {
-            font-family: 'EB Garamond', serif !important;
-            font-size: 19px !important;
+            font-family: 'EB Garamond', serif;
+            font-size: 19px;
         }
 
         .notebook-editor-content .ProseMirror {
@@ -42,6 +42,14 @@ const NotebookStyles = () => (
             outline: none;
             padding-top: 2px;
             padding-left: 77px !important;
+            padding-right: 2px;
+            caret-color: #000 !important;
+            caret-shape: bar !important;
+        }
+
+        /* Ensure caret is always visible */
+        .notebook-editor-content .ProseMirror:focus {
+            caret-color: #000 !important;
         }
 
         .notebook-editor-content .ProseMirror p {
@@ -50,19 +58,6 @@ const NotebookStyles = () => (
             padding-left: 1px;
             line-height: 32px !important;
             min-height: 32px !important;
-            display: flex;
-            align-items: center;
-        }
-
-        .notebook-editor-content .ProseMirror h1 {
-            font-size: 32px !important;
-            font-weight: 900 !important;
-            line-height: 64px !important;
-            margin: 0 !important;
-            color: #1a1a1a;
-            text-transform: uppercase;
-            letter-spacing: -0.02em;
-            padding-bottom: 0px;
         }
 
         .notebook-editor-content .ProseMirror h2 {
@@ -71,6 +66,15 @@ const NotebookStyles = () => (
             line-height: 32px !important;
             margin: 0 !important;
             color: #333;
+        }
+        
+        /* Tab character styling - fixed 40px tab width */
+        .notebook-editor-content .ProseMirror .tab-char,
+        .notebook-editor-content .ProseMirror span[data-tab] {
+            display: inline-block;
+            min-width: 8px;
+            width: 40px;
+            background: transparent;
         }
 
         /* Placeholder style */
@@ -92,6 +96,32 @@ const NotebookStyles = () => (
         .notebook-editor-content .ProseMirror-focused p.is-empty:first-child::before {
             opacity: 0;
             display: none;
+        }
+
+        /* List Styling */
+        .notebook-editor-content .ProseMirror ul {
+            list-style-type: disc !important;
+            padding-left: 1.5rem !important;
+            margin-top: 0.5rem !important;
+            margin-bottom: 0.5rem !important;
+        }
+
+        .notebook-editor-content .ProseMirror ol {
+            list-style-type: decimal !important;
+            padding-left: 1.5rem !important;
+            margin-top: 0.5rem !important;
+            margin-bottom: 0.5rem !important;
+        }
+
+        .notebook-editor-content .ProseMirror li {
+            position: relative;
+            line-height: 32px !important;
+        }
+
+        .notebook-editor-content .ProseMirror li p {
+            display: inline-block !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
     `}</style>
 );
@@ -281,21 +311,29 @@ export default function NotebookPage() {
         }
     }, [isHydrated, selectedNoteId, filteredNotes, searchQuery]);
 
+    // Track if we're syncing from store (to prevent auto-save loop)
+    const isSyncingFromStore = useRef(false);
+
     // Sync local state with active note
     useEffect(() => {
         if (activeNote) {
+            isSyncingFromStore.current = true;
             setLocalTitle(activeNote.title || 'Unbenannte Notiz');
             const p = activeNote.pages && activeNote.pages.length > 0
                 ? activeNote.pages
                 : [activeNote.content || ''];
             setLocalPages(p);
             setCurrentPageIndex(0);
+            // Reset sync flag after state updates are applied
+            setTimeout(() => {
+                isSyncingFromStore.current = false;
+            }, 0);
         } else {
             setLocalTitle('');
             setLocalPages(['']);
             setCurrentPageIndex(0);
         }
-    }, [activeNote]);
+    }, [activeNote?.id]); // Only re-sync when note ID changes, not on every update
 
     const handleCreateNote = () => {
         const id = addNote({
@@ -308,6 +346,36 @@ export default function NotebookPage() {
         setSelectedNoteId(id);
         return id;
     };
+
+    // Immediate auto-save (no delay) - saves on every change
+    useEffect(() => {
+        // Don't save if we're syncing from store (prevents infinite loop)
+        if (isSyncingFromStore.current) return;
+        if (!selectedNoteId || localPages.length === 0) return;
+
+        // Save immediately
+        updateNote(selectedNoteId, {
+            title: localTitle || 'Unbenannte Notiz',
+            pages: localPages,
+            content: localPages.join('\n\n')
+        });
+    }, [localPages, localTitle, selectedNoteId, updateNote]);
+
+    // Also save on page unload/close
+    useEffect(() => {
+        const handleBeforeUnload = () => {
+            if (selectedNoteId && localPages.length > 0) {
+                updateNote(selectedNoteId, {
+                    title: localTitle || 'Unbenannte Notiz',
+                    pages: localPages,
+                    content: localPages.join('\n\n')
+                });
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [selectedNoteId, localTitle, localPages, updateNote]);
 
     const handleSave = () => {
         if (selectedNoteId) {
@@ -329,6 +397,24 @@ export default function NotebookPage() {
         setLocalPages(newPages);
         setCurrentPageIndex(newPages.length - 1);
         toast.info('Neue Seite hinzugefügt');
+    };
+
+    const handleDeletePage = (pageIndex: number) => {
+        if (localPages.length <= 1) {
+            toast.error('Die letzte Seite kann nicht gelöscht werden');
+            return;
+        }
+        if (confirm(`Seite ${pageIndex + 1} wirklich löschen?`)) {
+            const newPages = localPages.filter((_, i) => i !== pageIndex);
+            setLocalPages(newPages);
+            // Adjust current page index if needed
+            if (currentPageIndex >= newPages.length) {
+                setCurrentPageIndex(newPages.length - 1);
+            } else if (currentPageIndex > pageIndex) {
+                setCurrentPageIndex(currentPageIndex - 1);
+            }
+            toast.success('Seite gelöscht');
+        }
     };
 
     const updateCurrentPageContent = (newContent: string) => {
@@ -473,8 +559,8 @@ export default function NotebookPage() {
                     </div>
 
                     {/* Central Editor Area */}
-                    <div className="flex-1 flex flex-col h-full overflow-hidden gap-4">
-                        <div className="shrink-0">
+                    <div className="flex-1 flex flex-col h-full overflow-visible gap-4 relative z-[100]">
+                        <div className="shrink-0 relative z-50">
                             <NotebookToolbar editor={editor} />
                         </div>
                         {activeNote ? (
@@ -490,7 +576,7 @@ export default function NotebookPage() {
                                     {/* Vertical line */}
                                     <div className="absolute left-[80px] top-0 bottom-0 w-px bg-rose-200" />
 
-                                    <div className="px-4">
+                                    <div className="px-2">
                                         <NotebookEditor
                                             key={`${selectedNoteId}-${currentPageIndex}`}
                                             content={localPages[currentPageIndex]}
@@ -511,7 +597,7 @@ export default function NotebookPage() {
 
                     {/* Table of Contents - RHS */}
                     {activeNote && (
-                        <div className="w-64 flex flex-col h-full shrink-0 overflow-hidden">
+                        <div className="w-64 flex flex-col h-full shrink-0 overflow-hidden relative z-10">
                             <TableOfContents
                                 items={tableOfContents}
                                 currentPageIndex={currentPageIndex}
@@ -522,18 +608,29 @@ export default function NotebookPage() {
                                 <div className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-4 text-center">Schnellauswahl</div>
                                 <div className="grid grid-cols-4 gap-2">
                                     {localPages.map((_, i) => (
-                                        <button
-                                            key={i}
-                                            onClick={() => handlePageChange(i)}
-                                            className={cn(
-                                                "h-9 rounded-xl flex items-center justify-center text-[10px] font-black transition-all",
-                                                currentPageIndex === i
-                                                    ? "bg-amber-100 text-amber-700 border border-amber-200 shadow-sm scale-110"
-                                                    : "bg-zinc-100 text-zinc-400 border border-transparent hover:bg-zinc-200"
+                                        <div key={i} className="relative group">
+                                            <button
+                                                onClick={() => handlePageChange(i)}
+                                                className={cn(
+                                                    "w-full h-9 rounded-xl flex items-center justify-center text-[10px] font-black transition-all",
+                                                    currentPageIndex === i
+                                                        ? "bg-amber-100 text-amber-700 border border-amber-200 shadow-sm scale-110"
+                                                        : "bg-zinc-100 text-zinc-400 border border-transparent hover:bg-zinc-200"
+                                                )}
+                                            >
+                                                {i + 1}
+                                            </button>
+                                            {/* Delete button - only show if more than 1 page */}
+                                            {localPages.length > 1 && (
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); handleDeletePage(i); }}
+                                                    className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600 text-[8px]"
+                                                    title={`Seite ${i + 1} löschen`}
+                                                >
+                                                    ×
+                                                </button>
                                             )}
-                                        >
-                                            {i + 1}
-                                        </button>
+                                        </div>
                                     ))}
                                 </div>
                             </div>
