@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     // that causes errors on Vercel due to type inference issues
     ignoreBuildErrors: true,
   },
+  transpilePackages: ["@tiptap/react", "@tiptap/core", "@tiptap/extension-bubble-menu", "@tiptap/extension-floating-menu", "@floating-ui/dom"],
 };
 
 export default nextConfig;
