@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌱 Lebensplaner — Dein persönlicher Begleiter
 
-## Getting Started
+Ein modernes, minimalistisches und privates System zur Organisation deines Lebens. Der **Lebensplaner** hilft dir dabei, Klarheit in deinen Alltag zu bringen, Gewohnheiten aufzubauen und deine langfristigen Ziele zu erreichen.
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Highlights
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Der Lebensplaner ist mehr als nur eine To-Do-Liste. Er ist dein digitaler Rückzugsort für Struktur und Fokus.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **🚀 Übersicht (Dashboard):** Alles Wichtige auf einen Blick – deine Energie, deine Aufgaben und dein Fortschritt.
+- **📅 Tagesfokus:** Plane deinen Tag mit Aufgaben, Habit-Tracking und einem Journaling-Bereich.
+- **🎯 Ziel-Management:** Definiere Projekte und Meilensteine, um deine Träume in greifbare Schritte zu verwandeln.
+- **🧠 Brain Wiki & Notizen:** Ein Platz für deine Gedanken, Wissen und kreative Ideen.
+- **📊 Analytik:** Verstehe deine Muster durch detaillierte Einblicke in deinen Fortschritt und dein Energielevel.
+- **🔒 Privacy First:** Alle Daten werden lokal in deinem Browser gespeichert. Nichts verlässt dein Gerät.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🎨 Design-Philosophie
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Wir glauben an **Fokus durch Klarheit**. Deshalb verzichtet der Lebensplaner bewusst auf ablenkende Animationen und künstliche Farbverläufe.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Klare Kanten:** Solide Farben statt glänzender Verläufe.
+- **Sanfte Kontraste:** Indigo und neutrale Töne für eine beruhigende Arbeitsumgebung.
+- **Intuitive Navigation:** Eine strukturierte Benutzeroberfläche, die dich nicht überfordert.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🛠 Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Framework:** Next.js 15+ (App Router)
+- **Frontend:** React 19, TailwindCSS, Lucide Icons
+- **State Management:** Zustand (mit Persistenze-Middleware)
+- **Animationen:** Framer Motion (dezent & funktional)
+- **Editor:** Tiptap für ein nahtloses Schreibgefühl
+
+---
+
+## 🚀 Installation & Start
+
+Du möchtest deinen eigenen Planer lokal ausführen?
+
+1. **Repository klonen:**
+   ```bash
+   git clone https://github.com/kutaykurt/life-os.git
+   cd life-os
+   ```
+
+2. **Abhängigkeiten installieren:**
+   ```bash
+   npm install
+   ```
+
+3. **Entwicklungsserver starten:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Öffne [http://localhost:3000](http://localhost:3000)** in deinem Browser.
+
+---
+
+## 🔒 Datenschutz
+
+Deine Privatsphäre ist uns heilig. Der Lebensplaner nutzt **IndexedDB** zur lokalen Speicherung. Es gibt kein Backend, keine Tracker und keine Cloud-Synchronisation, die du nicht explizit selbst einrichtest. Deine Daten gehören dir.
+
+---
+
+Erstellt mit ❤️ von [Kutay Kurt](https://github.com/kutaykurt)
