@@ -114,11 +114,11 @@ export default function AnalyticsPage() {
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12 relative z-10">
                     <div>
                         <div className="flex items-center gap-6 mb-4">
-                            <div className="w-16 h-16 rounded-[2.5rem] bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-indigo-500/30">
+                            <div className="w-16 h-16 rounded-[2.5rem] bg-indigo-600 flex items-center justify-center shadow-2xl shadow-indigo-500/30">
                                 <Activity className="w-8 h-8 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-5xl font-black text-[var(--foreground)] tracking-tighter uppercase italic bg-clip-text text-transparent bg-gradient-to-r from-[var(--foreground)] to-[var(--foreground-muted)]">
+                                <h1 className="text-5xl font-black text-[var(--foreground)] tracking-tighter uppercase italic">
                                     Analytik-<span className="text-indigo-500">Kern</span>
                                 </h1>
                                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500">System-Modus: Diagnose / Tiefen-Analyse</p>
@@ -190,7 +190,7 @@ export default function AnalyticsPage() {
                     </div>
 
                     {/* Quarterly Report */}
-                    <Card variant="glass" className="p-10 bg-gradient-to-br from-indigo-500/10 to-purple-600/10 border-indigo-500/20 rounded-[3rem] relative overflow-hidden group">
+                    <Card variant="glass" className="p-10 bg-indigo-50 rounded-[3rem] relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-indigo-500/10 transition-colors" />
 
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-10">
@@ -245,7 +245,7 @@ export default function AnalyticsPage() {
                     </h2>
 
                     <Card variant="glass" className="p-4 rounded-[3rem] border-white/10 bg-white/5 shadow-2xl relative overflow-visible flex items-center justify-center min-h-[350px]">
-                        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.03] to-purple-500/[0.03] pointer-events-none rounded-[3rem]" />
+                        <div className="absolute inset-0 bg-indigo-50/20 pointer-events-none rounded-[3rem]" />
                         <WheelOfLife />
                     </Card>
 
@@ -265,7 +265,7 @@ export default function AnalyticsPage() {
                                     >
                                         <div className={cn(
                                             "absolute inset-0 rounded-full transition-all duration-500",
-                                            count === 0 ? "bg-[var(--border)] opacity-20" : "bg-gradient-to-t from-indigo-500 to-purple-400 group-hover:scale-x-125"
+                                            count === 0 ? "bg-[var(--border)] opacity-20" : "bg-indigo-500 group-hover:scale-x-125"
                                         )} />
                                         <div className="opacity-0 group-hover:opacity-100 absolute -top-10 left-1/2 -translate-x-1/2 bg-[var(--background-surface)] border border-[var(--border)] text-[9px] font-black px-3 py-1.5 rounded-xl pointer-events-none whitespace-nowrap z-20 shadow-xl transition-all">
                                             {count} OPS

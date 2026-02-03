@@ -51,14 +51,14 @@
   --accent-info: #00d2ff;
   --accent-info-light: rgba(0, 210, 255, 0.12);
 
-  /* Ultra-Premium Gradients */
-  --gradient-primary: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%);
-  --gradient-success: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-  --gradient-warning: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --gradient-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%);
-  --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 1) 0%, rgba(241, 245, 249, 1) 100%);
-  --gradient-shimmer: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
-  --gradient-electric: linear-gradient(90deg, #7c3aed, #3b82f6, #00d2ff, #7c3aed);
+  /* Ultra-Premium Colors (formerly Gradients) */
+  --gradient-primary: #7c3aed;
+  --gradient-success: #00d2ff;
+  --gradient-warning: #f5576c;
+  --gradient-surface: #ffffff;
+  --gradient-card: #ffffff;
+  --gradient-shimmer: rgba(255, 255, 255, 0.4);
+  --gradient-electric: #7c3aed;
 
   /* Shadows - More defined for better depth perception */
   --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.06);
@@ -115,10 +115,10 @@
     --border-subtle: rgba(255, 255, 255, 0.06);
     --border-strong: rgba(255, 255, 255, 0.2);
 
-    /* Gradients for dark */
-    --gradient-surface: linear-gradient(180deg, rgba(19, 19, 26, 0.95) 0%, rgba(19, 19, 26, 0.8) 100%);
-    --gradient-card: linear-gradient(145deg, rgba(26, 26, 36, 0.9) 0%, rgba(19, 19, 26, 0.95) 100%);
-    --gradient-shimmer: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    /* Colors for dark */
+    --gradient-surface: #13131a;
+    --gradient-card: #1a1a24;
+    --gradient-shimmer: rgba(255, 255, 255, 0.05);
 
     /* Glass Effect Dark */
     --glass-bg: rgba(19, 19, 26, 0.75);
@@ -152,10 +152,10 @@
   --border-subtle: rgba(255, 255, 255, 0.06);
   --border-strong: rgba(255, 255, 255, 0.2);
 
-  /* Gradients for dark */
-  --gradient-surface: linear-gradient(180deg, rgba(19, 19, 26, 0.95) 0%, rgba(19, 19, 26, 0.8) 100%);
-  --gradient-card: linear-gradient(145deg, rgba(26, 26, 36, 0.9) 0%, rgba(19, 19, 26, 0.95) 100%);
-  --gradient-shimmer: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  /* Colors for dark */
+  --gradient-surface: #13131a;
+  --gradient-card: #1a1a24;
+  --gradient-shimmer: rgba(255, 255, 255, 0.05);
 
   /* Glass Effect Dark */
   --glass-bg: rgba(19, 19, 26, 0.75);
@@ -176,7 +176,7 @@
   --accent-primary-hover: #059669;
   --accent-primary-light: rgba(16, 185, 129, 0.1);
   --accent-primary-glow: rgba(16, 185, 129, 0.25);
-  --gradient-primary: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --gradient-primary: #10b981;
 }
 
 [data-theme="ocean"] {
@@ -184,7 +184,7 @@
   --accent-primary-hover: #0284c7;
   --accent-primary-light: rgba(14, 165, 233, 0.1);
   --accent-primary-glow: rgba(14, 165, 233, 0.25);
-  --gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+  --gradient-primary: #0ea5e9;
 }
 
 [data-theme="sunset"] {
@@ -192,7 +192,7 @@
   --accent-primary-hover: #e11d48;
   --accent-primary-light: rgba(244, 63, 94, 0.1);
   --accent-primary-glow: rgba(244, 63, 94, 0.25);
-  --gradient-primary: linear-gradient(135deg, #f43f5e 0%, #fb923c 100%);
+  --gradient-primary: #f43f5e;
 }
 
 [data-theme="midnight"] {
@@ -200,7 +200,7 @@
   --accent-primary-hover: #7c3aed;
   --accent-primary-light: rgba(139, 92, 246, 0.1);
   --accent-primary-glow: rgba(139, 92, 246, 0.25);
-  --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #312e81 100%);
+  --gradient-primary: #8b5cf6;
 }
 
 /* ─── Font Sizes ──────────────────────────────────────────────────────────── */
@@ -272,10 +272,8 @@ body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background:
-    radial-gradient(circle at 20% 30%, var(--accent-primary-light) 0%, transparent 40%),
-    radial-gradient(circle at 80% 70%, var(--accent-success-light) 0%, transparent 35%);
-  opacity: 0.5;
+  background: var(--background);
+  opacity: 1;
   pointer-events: none;
   z-index: -1;
 }
@@ -554,10 +552,7 @@ p {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg,
-      transparent,
-      rgba(255, 255, 255, 0.5),
-      transparent);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .card-premium:hover {
@@ -591,7 +586,7 @@ p {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle, var(--accent-primary-light) 0%, transparent 70%);
+  background: var(--accent-primary-light);
   opacity: 0;
   transition: opacity var(--transition-fast);
 }
@@ -700,12 +695,8 @@ p {
 }
 
 .electric-text {
-  background: var(--gradient-electric);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer 3s linear infinite;
+  color: var(--accent-primary);
+  font-weight: 900;
 }
 
 .truncate-2 {
@@ -754,29 +745,29 @@ p {
 }
 
 .energy-bg-1 {
-  background: linear-gradient(135deg, #fecaca, #fca5a5);
+  background: #fecaca;
 }
 
 .energy-bg-2 {
-  background: linear-gradient(135deg, #fed7aa, #fdba74);
+  background: #fed7aa;
 }
 
 .energy-bg-3 {
-  background: linear-gradient(135deg, #fef08a, #fde047);
+  background: #fef08a;
 }
 
 .energy-bg-4 {
-  background: linear-gradient(135deg, #d9f99d, #bef264);
+  background: #d9f99d;
 }
 
 .energy-bg-5 {
-  background: linear-gradient(135deg, #bbf7d0, #86efac);
+  background: #bbf7d0;
 }
 
 /* ─── Streak Badge ────────────────────────────────────────────────────────── */
 
 .streak-badge {
-  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  background: #f59e0b;
   color: white;
   font-weight: 600;
   padding: 4px 12px;

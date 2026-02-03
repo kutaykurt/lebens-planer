@@ -26,7 +26,7 @@ export default function HomePage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-[var(--background)]">
         <div className="text-5xl animate-bounce">🌱</div>
-        <h1 className="text-2xl font-bold text-[var(--foreground)]">Life OS</h1>
+        <h1 className="text-2xl font-bold text-[var(--foreground)]">Lebensplaner</h1>
         <p className="text-[var(--foreground-secondary)]">Wird geladen...</p>
       </div>
     );

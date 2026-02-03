@@ -23,11 +23,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
         const variants = {
             primary: `
-        bg-gradient-to-r from-[var(--accent-primary)] to-[#8b5cf6]
+        bg-[var(--accent-primary)]
         text-white 
         shadow-md shadow-[var(--accent-primary)]/20
         hover:shadow-lg hover:shadow-[var(--accent-primary)]/30
-        hover:brightness-110
+        hover:brightness-105
         focus-visible:ring-[var(--accent-primary)]
       `,
             secondary: `
@@ -48,19 +48,19 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         hover:bg-[var(--accent-primary-light)]
       `,
             destructive: `
-        bg-gradient-to-r from-[var(--accent-error)] to-[#f87171]
+        bg-[var(--accent-error)]
         text-white 
         shadow-md shadow-[var(--accent-error)]/20
         hover:shadow-lg hover:shadow-[var(--accent-error)]/30
-        hover:brightness-110
+        hover:brightness-105
         focus-visible:ring-[var(--accent-error)]
       `,
             success: `
-        bg-gradient-to-r from-[var(--accent-success)] to-[#34d399]
+        bg-[var(--accent-success)]
         text-white 
         shadow-md shadow-[var(--accent-success)]/20
         hover:shadow-lg hover:shadow-[var(--accent-success)]/30
-        hover:brightness-110
+        hover:brightness-105
         focus-visible:ring-[var(--accent-success)]
       `,
         };
@@ -85,8 +85,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 disabled={disabled || isLoading}
                 {...props}
             >
-                {/* Shimmer effect on hover */}
-                <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:translate-x-full transition-transform duration-700" />
+                {/* Shimmer effect removed */}
 
                 {isLoading ? (
                     <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">

@@ -14,14 +14,29 @@ const PRECACHE_URLS = [
     '/icons/icon-512.svg',
 ];
 
+// Precache critical assets
 self.addEventListener('install', (event) => {
     // Skip waiting to activate immediately
     self.skipWaiting();
 
-    // Precache critical assets
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(PRECACHE_URLS);
+            // Fetch each asset with credentials to support protected environments (like Vercel Preview)
+            return Promise.all(
+                PRECACHE_URLS.map((url) => {
+                    return fetch(url, { credentials: 'include' })
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error(`Request for ${url} failed with status ${response.status}`);
+                            }
+                            return cache.put(url, response);
+                        })
+                        .catch((err) => {
+                            console.warn(`Could not precache ${url}:`, err);
+                            // We don't necessarily want to fail the whole installation if one asset fails
+                        });
+                })
+            );
         })
     );
 });

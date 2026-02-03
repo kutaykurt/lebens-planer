@@ -189,7 +189,7 @@ export default function WikiPage() {
                                 key={note.id}
                                 className={cn(
                                     "group p-8 cursor-pointer hover:border-indigo-500/50 transition-all duration-500 relative flex flex-col h-full overflow-hidden border-2 shadow-sm rounded-[2rem]",
-                                    isLarge ? "lg:col-span-2 lg:row-span-2 bg-gradient-to-br from-[var(--background-surface)] to-[var(--background-elevated)]" :
+                                    isLarge ? "lg:col-span-2 lg:row-span-2 bg-[var(--background-surface)]" :
                                         isWide ? "lg:col-span-2 bg-[var(--background-surface)]" : "bg-[var(--background-surface)]",
                                     note.isPinned && "border-amber-500/30 shadow-amber-500/5"
                                 )}

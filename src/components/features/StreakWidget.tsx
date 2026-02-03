@@ -73,15 +73,15 @@ export function StreakWidget() {
 
     return (
         <Card variant="elevated" className="relative overflow-hidden group">
-            {/* Background Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent-primary)]/5 to-transparent pointer-events-none" />
+            {/* Background Decor */}
+            <div className="absolute inset-0 bg-indigo-50/30 pointer-events-none" />
 
             <div className="flex flex-col p-4 gap-4">
                 {/* Master Streak (Top) */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="relative">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-300">
+                            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-300">
                                 <Trophy className="w-5 h-5" />
                             </div>
                             {masterStreak.current > 0 && (

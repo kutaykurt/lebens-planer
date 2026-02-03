@@ -49,6 +49,23 @@ export function NotebookToolbar({ editor }: { editor: any }) {
         { name: 'Patrick Hand', value: "'Patrick Hand', cursive" },
     ];
 
+    // Force re-render on editor transactions to update toolbar state
+    const [, setUpdateCounter] = useState(0);
+    const forceUpdate = useCallback(() => setUpdateCounter(v => v + 1), []);
+
+    useEffect(() => {
+        if (!editor) return;
+
+        const handleTransaction = () => {
+            forceUpdate();
+        };
+
+        editor.on('transaction', handleTransaction);
+        return () => {
+            editor.off('transaction', handleTransaction);
+        };
+    }, [editor, forceUpdate]);
+
     // Update highlight color state when editor selection changes
     useEffect(() => {
         if (!editor) return;
@@ -255,6 +272,7 @@ interface NotebookEditorProps {
 export function NotebookEditor({ content, onChange, placeholder, onEditorReady }: NotebookEditorProps) {
     const editor = useEditor({
         immediatelyRender: false,
+        autofocus: 'start',
         extensions: [
             StarterKit.configure({
                 heading: {
@@ -280,7 +298,7 @@ export function NotebookEditor({ content, onChange, placeholder, onEditorReady }
         editorProps: {
             attributes: {
                 class: 'focus:outline-none min-h-[70vh] notebook-font text-zinc-900',
-                style: 'padding-left: 82px; padding-right: 60px; font-size: 19px;',
+                style: 'padding-left: 77px; padding-right: 55px; font-size: 19px; caret-color: #000 !important;',
             },
         },
     });

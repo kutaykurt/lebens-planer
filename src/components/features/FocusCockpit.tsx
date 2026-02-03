@@ -11,9 +11,9 @@ import { cn } from '@/lib/utils';
 type TimerMode = 'work' | 'shortBreak' | 'longBreak';
 
 const MODES: Record<TimerMode, { label: string; time: number; color: string; icon: any }> = {
-    work: { label: 'Fokus', time: 25 * 60, color: 'from-rose-500 to-orange-500', icon: Target },
-    shortBreak: { label: 'Pause', time: 5 * 60, color: 'from-emerald-400 to-teal-500', icon: Coffee },
-    longBreak: { label: 'Lange Pause', time: 15 * 60, color: 'from-blue-400 to-indigo-500', icon: Clock },
+    work: { label: 'Fokus', time: 25 * 60, color: 'bg-rose-500', icon: Target },
+    shortBreak: { label: 'Pause', time: 5 * 60, color: 'bg-emerald-500', icon: Coffee },
+    longBreak: { label: 'Lange Pause', time: 15 * 60, color: 'bg-blue-500', icon: Clock },
 };
 
 export function FocusCockpit({ compact = false }: { compact?: boolean }) {
@@ -86,7 +86,7 @@ export function FocusCockpit({ compact = false }: { compact?: boolean }) {
             <Card variant="elevated" className="overflow-hidden relative group rounded-[1.5rem] border-none shadow-2xl shadow-indigo-500/5 self-start w-full">
                 {/* Background Decor */}
                 <div className={cn(
-                    "absolute inset-0 opacity-5 transition-colors duration-1000 bg-gradient-to-br",
+                    "absolute inset-0 opacity-5 transition-colors duration-1000",
                     MODES[mode].color
                 )} />
 

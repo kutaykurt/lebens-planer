@@ -115,7 +115,7 @@ export default function TodayPage() {
                             Tagesfokus
                         </h1>
                         <p className="text-[10px] text-[var(--foreground-muted)] font-medium mt-1">
-                            Verwalte deine Missionen und Routinen für den heutigen Tag.
+                            Verwalte deine Aufgaben und Routinen für den heutigen Tag.
                         </p>
                     </div>
                 </div>
@@ -178,7 +178,7 @@ export default function TodayPage() {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
                             <div className="space-y-4">
                                 <span className="text-[9px] font-black uppercase tracking-widest text-[var(--foreground-muted)] flex items-center gap-2">
-                                    <Zap className="w-3 h-3" /> Zentrale Missionen
+                                    <Zap className="w-3 h-3" /> Fokus-Aufgaben
                                 </span>
                                 <div className="h-10 rounded-xl bg-white/5 border border-dashed border-white/10 flex items-center justify-center">
                                     <span className="text-[9px] font-black uppercase opacity-20 italic tracking-widest">Idle</span>
@@ -321,18 +321,18 @@ export default function TodayPage() {
             {/* ─── HANDLUNGSEBENE ──────────────────────────────────────────────── */}
             <div className="relative z-10 flex items-center gap-4 mb-6 px-4">
                 <div className="w-2 h-8 bg-indigo-500 rounded-full shadow-glow-indigo" />
-                <h2 className="text-2xl font-black uppercase tracking-tighter italic">Handlungsebene</h2>
+                <h2 className="text-2xl font-black uppercase tracking-tighter italic">Meine Aufgaben</h2>
             </div>
 
             <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 mb-32">
                 <div className="lg:col-span-8 space-y-4">
                     <div className="flex items-center justify-between mb-2 px-4 text-[9px] font-black uppercase tracking-[0.2em] text-[var(--foreground-muted)]">
-                        <span>Aktive Missionen</span>
+                        <span>Aktive Aufgaben</span>
                         <Button
                             onClick={() => setShowAddTask(true)}
                             className="bg-indigo-500 hover:bg-indigo-600 text-white gap-2 h-9 px-4 rounded-xl font-black uppercase tracking-widest text-[8px] shadow-lg shadow-indigo-500/20"
                         >
-                            <Plus className="w-3.5 h-3.5" /> Neue Mission
+                            <Plus className="w-3.5 h-3.5" /> Neue Aufgabe
                         </Button>
                     </div>
 
@@ -483,8 +483,8 @@ export default function TodayPage() {
             <Dialog
                 open={!!deletingTaskId}
                 onClose={() => setDeletingTaskId(null)}
-                title="Mission entfernen?"
-                description="Diese Mission wird dauerhaft aus deinem Log gelöscht."
+                title="Aufgabe entfernen?"
+                description="Diese Aufgabe wird dauerhaft aus deinem Log gelöscht."
             >
                 <DialogFooter>
                     <Button variant="ghost" onClick={() => setDeletingTaskId(null)}>

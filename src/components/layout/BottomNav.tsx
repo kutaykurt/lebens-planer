@@ -6,7 +6,7 @@ import { Home, Rocket, Calendar, Wallet, Brain, Activity, LayoutGrid, Users, Tro
 import { cn } from '@/lib/utils';
 
 const navItems = [
-    { href: '/dashboard', label: 'Terminal', icon: Rocket },
+    { href: '/dashboard', label: 'Übersicht', icon: Home },
     { href: '/finance', label: 'Finanzen', icon: Wallet },
     { href: '/wiki', label: 'Wiki', icon: Brain },
     { href: '/notebook', label: 'Notiz', icon: PenTool },
@@ -24,8 +24,8 @@ export function BottomNav() {
             <div suppressHydrationWarning className="max-w-3xl mx-auto px-4 pb-6">
                 <div suppressHydrationWarning className="relative flex items-center justify-around h-20 px-4 bg-[#0a0a0a] backdrop-blur-3xl border border-white/5 rounded-[2.5rem] shadow-2xl shadow-black overflow-hidden">
 
-                    {/* Background glow effects */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-white/5 to-transparent pointer-events-none" />
+                    {/* Background effects */}
+                    <div className="absolute inset-0 bg-white/5 pointer-events-none" />
 
                     {navItems.map((item) => {
                         const isActive = pathname.startsWith(item.href);

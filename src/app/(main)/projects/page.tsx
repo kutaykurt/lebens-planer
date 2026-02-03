@@ -42,7 +42,7 @@ function ProjectCard({ project, index, onDelete }: { project: Project; index: nu
                 <div className="flex flex-col md:flex-row md:items-start gap-8 relative z-10">
                     {/* Icon & Status */}
                     <div className="flex flex-col items-center gap-4 shrink-0">
-                        <div className="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-2xl shadow-indigo-500/20 group-hover:rotate-6 transition-transform duration-500">
+                        <div className="w-20 h-20 rounded-[2rem] bg-indigo-600 flex items-center justify-center shadow-2xl shadow-indigo-500/20 group-hover:rotate-6 transition-transform duration-500">
                             <Rocket className="w-10 h-10 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]" />
                         </div>
                         <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
@@ -167,7 +167,7 @@ function ProjectCard({ project, index, onDelete }: { project: Project; index: nu
                 {/* Progressive Progress Bar */}
                 <div className="mt-8 h-3 rounded-full bg-[var(--background-elevated)] overflow-hidden shadow-inner flex">
                     <div
-                        className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-violet-600 transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(99,102,241,0.4)]"
+                        className="h-full bg-indigo-500 transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(99,102,241,0.2)]"
                         style={{ width: `${progress}%` }}
                     />
                 </div>
@@ -198,7 +198,7 @@ function AddProjectDialog({ open, onClose }: { open: boolean; onClose: () => voi
                 tagIds: selectedTags,
                 sortOrder: 0,
             });
-            toast.success('System-Mission gestartet! 🚀');
+            toast.success('Neues Projekt gestartet! 🚀');
             setTitle('');
             setDescription('');
             setDeadline('');
@@ -208,7 +208,7 @@ function AddProjectDialog({ open, onClose }: { open: boolean; onClose: () => voi
     };
 
     return (
-        <Dialog open={open} onClose={onClose} title="Neue Mission starten">
+        <Dialog open={open} onClose={onClose} title="Neues Projekt starten">
             <form onSubmit={handleSubmit} className="space-y-6">
                 <Input
                     label="Missions-Bezeichnung"
@@ -302,14 +302,14 @@ export default function ProjectsPage() {
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12 relative z-10">
                     <div>
                         <div className="flex items-center gap-6 mb-4">
-                            <div className="w-16 h-16 rounded-[2.5rem] bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-indigo-500/30">
+                            <div className="w-16 h-16 rounded-[2.5rem] bg-indigo-600 flex items-center justify-center shadow-2xl shadow-indigo-500/30">
                                 <Archive className="w-8 h-8 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-5xl font-black text-[var(--foreground)] tracking-tighter uppercase italic bg-clip-text text-transparent bg-gradient-to-r from-[var(--foreground)] to-[var(--foreground-muted)]">
+                                <h1 className="text-5xl font-black text-[var(--foreground)] tracking-tighter uppercase italic">
                                     Projekt-<span className="electric-text">Zentrum</span>
                                 </h1>
-                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500">Operation: Structural Growth</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500">Ziel: Structural Growth</p>
                                 <p className="text-[10px] text-[var(--foreground-muted)] font-medium mt-1">
                                     Bündle deine Aufgaben in klaren Missionen, um große Ziele Schritt für Schritt zu erreichen.
                                 </p>
@@ -339,7 +339,7 @@ export default function ProjectsPage() {
                             className="h-auto aspect-square md:aspect-auto md:h-24 md:px-8 rounded-[2rem] bg-indigo-500 hover:bg-indigo-600 text-white flex flex-col items-center justify-center group shadow-2xl shadow-indigo-500/20"
                         >
                             <Plus className="w-8 h-8 group-hover:rotate-90 transition-transform duration-500" />
-                            <span className="hidden md:block text-[10px] font-black uppercase tracking-[0.2em] mt-2">New Mission</span>
+                            <span className="hidden md:block text-[10px] font-black uppercase tracking-[0.2em] mt-2">Neues Projekt</span>
                         </Button>
                     </div>
                 </div>
@@ -363,7 +363,7 @@ export default function ProjectsPage() {
                         size="lg"
                         className="gap-3 bg-indigo-500 hover:bg-indigo-600 text-white px-10 rounded-2xl h-14 shadow-xl shadow-indigo-500/20 font-black uppercase tracking-widest relative z-10"
                     >
-                        <Plus className="w-6 h-6" /> Erste Mission starten
+                        <Plus className="w-6 h-6" /> Erstes Projekt starten
                     </Button>
                 </div>
             ) : (

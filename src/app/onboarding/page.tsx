@@ -13,37 +13,37 @@ const STEPS = [
     {
         id: 'welcome',
         emoji: '🌱',
-        title: 'Willkommen bei Life OS',
-        description: 'Dein persönliches System für ein bewussteres Leben – komplett privat und offline.',
-        color: 'from-indigo-500 to-purple-500',
+        title: 'Willkommen beim Lebensplaner',
+        description: 'Dein persönlicher Begleiter für ein bewussteres Leben – komplett privat und offline.',
+        color: 'bg-indigo-500',
     },
     {
         id: 'name',
-        icon: Brain,
+        emoji: '👋',
         title: 'Dein Profil',
         description: 'Wie dürfen wir dich nennen?',
-        color: 'from-pink-500 to-rose-500',
+        color: 'bg-rose-500',
     },
     {
         id: 'goals',
         icon: Target,
         title: 'Ziele definieren',
         description: 'Setze dir langfristige Ziele, um deinem Alltag Richtung zu geben.',
-        color: 'from-blue-500 to-cyan-500',
+        color: 'bg-indigo-600',
     },
     {
         id: 'habits',
         icon: Repeat,
         title: 'Gewohnheiten aufbauen',
         description: 'Kleine tägliche Gewohnheiten führen zu großen Veränderungen.',
-        color: 'from-emerald-500 to-teal-500',
+        color: 'bg-emerald-500',
     },
     {
         id: 'ready',
         icon: Sparkles,
         title: 'Bereit zum Start!',
         description: 'Du hast alles, was du brauchst. Lass uns loslegen!',
-        color: 'from-amber-400 to-orange-500',
+        color: 'bg-amber-500',
     },
 ];
 
@@ -110,6 +110,7 @@ export default function OnboardingPage() {
                     category: 'personal',
                     timeHorizon: 'medium',
                     status: 'active',
+                    progress: 0,
                 });
             }
 
@@ -145,9 +146,9 @@ export default function OnboardingPage() {
                     className={cn(
                         'h-2 rounded-full transition-all duration-500 ease-out',
                         index === currentStep
-                            ? 'w-10 bg-gradient-to-r from-[var(--accent-primary)] to-[#8b5cf6]'
+                            ? 'w-10 bg-indigo-500'
                             : index < currentStep
-                                ? 'w-2 bg-[var(--accent-primary)]'
+                                ? 'w-2 bg-indigo-400'
                                 : 'w-2 bg-[var(--border)]'
                     )}
                 />
@@ -170,7 +171,7 @@ export default function OnboardingPage() {
                     {/* Icon */}
                     <div className={cn(
                         'w-24 h-24 mx-auto mb-6 rounded-3xl flex items-center justify-center',
-                        'bg-gradient-to-br shadow-2xl',
+                        'shadow-2xl text-white',
                         step.color
                     )}>
                         {step.emoji ? (

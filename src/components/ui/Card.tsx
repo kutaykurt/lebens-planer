@@ -19,7 +19,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         shadow-sm
       `,
             elevated: `
-        bg-[var(--gradient-card)]
+        bg-[var(--background-surface)]
         border border-[var(--border)]
         shadow-md
       `,
@@ -28,7 +28,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         shadow-lg
       `,
             gradient: `
-        bg-gradient-to-br from-[var(--accent-primary)]/5 via-transparent to-[var(--accent-success)]/5
+        bg-[var(--background-surface)]
         border border-[var(--border)]
         shadow-sm
       `,
@@ -71,10 +71,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
                 )}
                 {...props}
             >
-                {/* Top shine effect for elevated cards */}
-                {(variant === 'elevated' || variant === 'glass') && (
-                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-                )}
+                {/* Shine effect removed */}
                 {children}
             </div>
         );

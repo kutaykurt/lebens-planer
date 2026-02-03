@@ -40,15 +40,18 @@ const NotebookStyles = () => (
         .notebook-editor-content .ProseMirror {
             min-height: 75vh;
             outline: none;
-            padding-top: 5px;
+            padding-top: 2px;
+            padding-left: 77px !important;
         }
 
         .notebook-editor-content .ProseMirror p {
+            position: relative;
             margin: 0 !important;
+            padding-left: 1px;
             line-height: 32px !important;
             min-height: 32px !important;
             display: flex;
-            align-items: baseline;
+            align-items: center;
         }
 
         .notebook-editor-content .ProseMirror h1 {
@@ -68,6 +71,27 @@ const NotebookStyles = () => (
             line-height: 32px !important;
             margin: 0 !important;
             color: #333;
+        }
+
+        /* Placeholder style */
+        .notebook-editor-content .ProseMirror p.is-empty:first-child::before {
+            content: attr(data-placeholder);
+            position: absolute;
+            left: 12px;
+            color: #94a3b8;
+            pointer-events: none;
+            font-style: italic;
+            opacity: 0.6;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            transition: opacity 0.1s ease;
+        }
+
+        /* Hide placeholder on focus */
+        .notebook-editor-content .ProseMirror-focused p.is-empty:first-child::before {
+            opacity: 0;
+            display: none;
         }
     `}</style>
 );
@@ -472,6 +496,7 @@ export default function NotebookPage() {
                                             content={localPages[currentPageIndex]}
                                             onChange={updateCurrentPageContent}
                                             onEditorReady={setEditor}
+                                            placeholder="Datum, Titel, Name"
                                         />
                                     </div>
                                 </div>

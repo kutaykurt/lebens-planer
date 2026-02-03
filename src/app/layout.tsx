@@ -16,15 +16,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Life OS – Persönliches Lebens-Management',
-  description: 'Dein privates, offline-fähiges System für Ziele, Aufgaben, Gewohnheiten und Reflexion.',
+  title: 'Lebensplaner – Dein persönliches Leben im Fokus',
+  description: 'Dein privater Begleiter für Ziele, Aufgaben, Gewohnheiten und tägliche Reflexion.',
   keywords: ['productivity', 'goals', 'habits', 'tasks', 'reflection', 'life management'],
   authors: [{ name: 'Kutay Kurt' }],
-  manifest: '/manifest.json',
+  // manifest: '/manifest.json', // Moved to manual link in head to support crossorigin attribute
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Life OS',
+    title: 'Lebensplaner',
   },
 };
 
@@ -48,6 +48,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/icons/icon-192.svg" />
+        <link rel="manifest" href="/manifest.json" crossOrigin="use-credentials" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="theme-color" content="#0a0a0f" />

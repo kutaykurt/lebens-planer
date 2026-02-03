@@ -81,33 +81,52 @@ export default function OmniDashboard() {
         toast.success('Hinzugefügt');
     };
 
+    const preferences = useLifeOSStore((s) => s.preferences);
+    const userName = preferences?.name || 'User';
+
     return (
         <PageContainer width="full" className="text-[var(--foreground)] pb-32">
-            {/* ─── HEADER ─── */}
-            <div className="mb-12">
-                <div className="flex items-center gap-3 text-indigo-500 mb-2">
-                    <Zap className="w-5 h-5 fill-current" />
-                    <span className="text-xs font-black uppercase tracking-[0.4em]">Life OS Zentrale</span>
+            {/* ─── WELCOME HEADER ─── */}
+            <div className="mb-16 relative">
+                {/* Decorative background glow */}
+                <div className="absolute -top-24 -left-20 w-96 h-96 bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none" />
+                <div className="absolute -top-20 -right-20 w-80 h-80 bg-rose-500/5 rounded-full blur-[100px] pointer-events-none" />
+
+                <div className="relative z-10">
+                    <div className="flex items-center gap-3 text-indigo-600 mb-4 animate-fade-in">
+                        <div className="p-2 bg-indigo-100 rounded-xl">
+                            <Sparkles className="w-4 h-4" />
+                        </div>
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em]">Willkommen zurück</span>
+                    </div>
+
+                    <h1 className="text-6xl font-black tracking-tighter leading-tight">
+                        Schön, dass du da bist, <br />
+                        <span className="text-indigo-600 italic">
+                            {userName}.
+                        </span>
+                    </h1>
+
+                    <p className="text-[var(--foreground-secondary)] text-xl mt-6 font-medium max-w-2xl leading-relaxed">
+                        Hier ist deine <span className="font-black italic text-indigo-600">Übersicht</span> – bereit für neue Erfolge heute?
+                    </p>
                 </div>
-                <h1 className="text-5xl font-black tracking-tighter italic">
-                    Deine <span className="text-indigo-500">Kommandozentrale</span>
-                </h1>
-                <p className="text-[var(--foreground-muted)] text-lg mt-2 font-medium italic">
-                    Alles an einem Ort. Direkt bearbeitbar. Keine Umwege.
-                </p>
             </div>
 
             {/* ─── 3 COLUMN COMMAND CENTER ─── */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
 
                 {/* SPALTE 1: TAGESPLAN */}
-                <div className="space-y-6">
+                <div className="space-y-8">
                     <div className="flex items-center justify-between px-2">
-                        <h2 className="text-lg font-black uppercase tracking-widest text-indigo-500 flex items-center gap-3 italic">
-                            <ListTodo className="w-5 h-5" /> Heute
-                        </h2>
-                        <div className="bg-indigo-500/10 px-3 py-1 rounded-full text-[10px] font-black text-indigo-600 uppercase">
-                            {tasks.length} Aufgaben
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-600">
+                                <ListTodo className="w-5 h-5" />
+                            </div>
+                            <h2 className="text-2xl font-black tracking-tight">Heute</h2>
+                        </div>
+                        <div className="bg-indigo-50 px-3 py-1 rounded-full text-[10px] font-black text-indigo-600 uppercase tracking-wider">
+                            {tasks.length} offen
                         </div>
                     </div>
 
@@ -166,9 +185,11 @@ export default function OmniDashboard() {
                         ))}
                     </div>
 
-                    {/* Routinen Section Inline */}
-                    <div className="pt-6 border-t border-[var(--border)]">
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 mb-4 px-2 italic">Tägliche Routinen</p>
+                    <div className="pt-10 border-t border-zinc-100">
+                        <div className="flex items-center gap-2 mb-4 px-2">
+                            <Flame className="w-3.5 h-3.5 text-emerald-500" />
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600/70">Deine Routinen</p>
+                        </div>
                         <div className="flex flex-wrap gap-2">
                             {activeHabits.map((habit) => {
                                 const isDone = habitLogs.some(l => l.habitId === habit.id && l.date === today && l.completed);
@@ -193,12 +214,15 @@ export default function OmniDashboard() {
                 </div>
 
                 {/* SPALTE 2: WISSEN */}
-                <div className="space-y-6">
+                <div className="space-y-8">
                     <div className="flex items-center justify-between px-2">
-                        <h2 className="text-lg font-black uppercase tracking-widest text-purple-500 flex items-center gap-3 italic">
-                            <Brain className="w-5 h-5" /> Gedanken
-                        </h2>
-                        <button onClick={() => window.location.href = '/wiki'} className="text-[10px] font-black text-purple-600 uppercase underline">Wiki öffnen</button>
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 bg-purple-500/10 rounded-2xl flex items-center justify-center text-purple-600">
+                                <Brain className="w-5 h-5" />
+                            </div>
+                            <h2 className="text-2xl font-black tracking-tight">Gedanken</h2>
+                        </div>
+                        <button onClick={() => window.location.href = '/wiki'} className="text-[10px] font-black text-purple-400 uppercase tracking-widest hover:text-purple-600 transition-colors">Notizen & Wiki</button>
                     </div>
 
                     {/* Quick Add Note */}
@@ -258,12 +282,15 @@ export default function OmniDashboard() {
                 </div>
 
                 {/* SPALTE 3: STRATEGIE */}
-                <div className="space-y-6">
+                <div className="space-y-8">
                     <div className="flex items-center justify-between px-2">
-                        <h2 className="text-lg font-black uppercase tracking-widest text-rose-500 flex items-center gap-3 italic">
-                            <Target className="w-5 h-5" /> Strategie
-                        </h2>
-                        <button onClick={() => window.location.href = '/focus'} className="text-[10px] font-black text-rose-600 uppercase underline">Fokus-Hub</button>
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 bg-rose-500/10 rounded-2xl flex items-center justify-center text-rose-600">
+                                <Target className="w-5 h-5" />
+                            </div>
+                            <h2 className="text-2xl font-black tracking-tight">Strategie</h2>
+                        </div>
+                        <button onClick={() => window.location.href = '/focus'} className="text-[10px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-600 transition-colors">Fokus-Hub</button>
                     </div>
 
                     {/* Quick Add Goal/Project */}
@@ -358,23 +385,22 @@ export default function OmniDashboard() {
                     </div>
 
                     {/* STATUS SUMMARY */}
-                    <div className="p-8 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-[3rem] border border-indigo-500/20 text-center relative overflow-hidden">
+                    <div className="p-8 bg-zinc-50 rounded-[3rem] border border-zinc-100 shadow-sm text-center relative overflow-hidden">
                         <div className="relative z-10">
-                            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500 mb-2">System Performance</h3>
-                            <div className="text-3xl font-black italic tracking-tighter mb-4">OPTIMAL</div>
-                            <div className="flex justify-center gap-4">
-                                <div className="text-center">
-                                    <p className="text-[8px] font-black text-[var(--foreground-muted)] uppercase">Done</p>
-                                    <p className="text-lg font-black">{tasks.filter(t => t.status === 'completed').length}</p>
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400 mb-4">Dein Status</h3>
+                            <div className="text-3xl font-black italic tracking-tighter mb-6">Alles im <span className="text-indigo-600 underline decoration-indigo-200 underline-offset-8">grünen Bereich</span></div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="text-center p-4 bg-white/50 rounded-2xl border border-indigo-50/50">
+                                    <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-1">Erledigt</p>
+                                    <p className="text-2xl font-black text-indigo-600">{tasks.filter(t => t.status === 'completed').length}</p>
                                 </div>
-                                <div className="w-px h-8 bg-[var(--border)]" />
-                                <div className="text-center">
-                                    <p className="text-[8px] font-black text-[var(--foreground-muted)] uppercase">Streak</p>
-                                    <p className="text-lg font-black">7</p>
+                                <div className="text-center p-4 bg-white/50 rounded-2xl border border-indigo-50/50">
+                                    <p className="text-[9px] font-black text-rose-400 uppercase tracking-widest mb-1">Streak</p>
+                                    <p className="text-2xl font-black text-rose-600">7</p>
                                 </div>
                             </div>
                         </div>
-                        <Sparkles className="absolute -bottom-4 -right-4 w-20 h-20 text-indigo-500/10" />
+                        <Sparkles className="absolute -bottom-4 -right-4 w-24 h-24 text-indigo-500/5" />
                     </div>
                 </div>
             </div>
