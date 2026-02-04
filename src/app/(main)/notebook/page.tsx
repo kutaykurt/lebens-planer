@@ -21,23 +21,42 @@ const NotebookStyles = () => (
            NOTEBOOK PAPER STYLES
            ═══════════════════════════════════════════════════════════════════════ */
         
+        :root {
+            --notebook-paper: #fcfaf2;
+            --notebook-lines: #e5e7eb;
+            --notebook-text: #1a1a1a;
+            --notebook-margin: #fca5a5;
+            --notebook-shadow-color: rgba(0,0,0,0.08);
+            --notebook-spiral-color: #d1d5db;
+        }
+
+        .dark {
+            --notebook-paper: #1a1a1a;
+            --notebook-lines: #2d2d2d;
+            --notebook-text: #e2e8f0;
+            --notebook-margin: #4a2b2b;
+            --notebook-shadow-color: rgba(0,0,0,0.5);
+            --notebook-spiral-color: #444;
+        }
+
         .notebook-paper-container {
             width: 700px;
             height: 880px; /* 26 Zeilen × 32px = 832px + 48px für Seitenzahl */
             position: relative;
             overflow: hidden !important;
-            background-color: #fcfaf2;
-            background-image: linear-gradient(#e5e7eb 1px, transparent 1px);
+            background-color: var(--notebook-paper);
+            background-image: linear-gradient(var(--notebook-lines) 1px, transparent 1px);
             background-size: 100% 32px;
             border-radius: 1.5rem;
-            border: 1px solid #e5e7eb;
+            border: 1px solid var(--notebook-lines);
             box-shadow: 
-                0 1px 1px rgba(0,0,0,0.08), 
-                0 8px 0 -4px #fcfaf2, 
-                0 8px 1px -3px rgba(0,0,0,0.08), 
-                0 16px 0 -8px #fcfaf2, 
-                0 16px 1px -7px rgba(0,0,0,0.08);
+                0 1px 1px var(--notebook-shadow-color), 
+                0 8px 0 -4px var(--notebook-paper), 
+                0 8px 1px -3px var(--notebook-shadow-color), 
+                0 16px 0 -8px var(--notebook-paper), 
+                0 16px 1px -7px var(--notebook-shadow-color);
             flex-shrink: 0;
+            transition: background-color 0.3s ease;
         }
 
         .notebook-editor-container {
@@ -54,8 +73,8 @@ const NotebookStyles = () => (
             font-family: 'EB Garamond', serif;
             font-size: 18px;
             line-height: 32px;
-            color: #1a1a1a;
-            caret-color: #000;
+            color: var(--notebook-text);
+            caret-color: var(--notebook-text);
             outline: none;
             overflow: hidden !important;
             height: 100%;
@@ -78,7 +97,7 @@ const NotebookStyles = () => (
             font-weight: 700 !important;
             line-height: 32px !important;
             margin: 0 !important;
-            color: #333;
+            color: var(--notebook-text);
         }
 
         .notebook-editor-prose ul,
@@ -125,8 +144,8 @@ const NotebookStyles = () => (
             width: 18px;
             height: 18px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #d1d5db 0%, #f3f4f6 100%);
-            border: 1px solid #9ca3af;
+            background: linear-gradient(135deg, var(--notebook-spiral-color) 0%, var(--notebook-lines) 100%);
+            border: 1px solid var(--notebook-lines);
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
         }
 
@@ -137,7 +156,7 @@ const NotebookStyles = () => (
             top: 0;
             bottom: 0;
             width: 1px;
-            background-color: #fca5a5;
+            background-color: var(--notebook-margin);
             pointer-events: none;
             z-index: 5;
         }
@@ -150,7 +169,7 @@ const NotebookStyles = () => (
             font-family: 'EB Garamond', serif;
             font-size: 14px;
             font-style: italic;
-            color: #9ca3af;
+            color: var(--foreground-muted);
             pointer-events: none;
             z-index: 10;
         }
@@ -178,8 +197,8 @@ const NoteCard = memo(({
             className={cn(
                 "p-4 rounded-2xl transition-all border group relative cursor-pointer",
                 isSelected
-                    ? "bg-white border-amber-300 shadow-md scale-[1.02]"
-                    : "bg-white/40 border-transparent hover:border-zinc-200 hover:bg-white/60"
+                    ? "bg-[var(--background-surface)] border-amber-500 shadow-lg scale-[1.02] dark:border-amber-400"
+                    : "bg-[var(--background-surface)]/40 border-[var(--border)] hover:border-amber-500/30 hover:bg-[var(--background-surface)]/60"
             )}
         >
             <div className="flex justify-between items-start mb-2 gap-2">
@@ -189,7 +208,7 @@ const NoteCard = memo(({
                 )}>
                     {note.title || 'Unbenannt'}
                 </h3>
-                {note.isPinned && <Pin className="w-3 h-3 text-amber-600 fill-current shrink-0" />}
+                {note.isPinned && <Pin className="w-3 h-3 text-amber-500 fill-current shrink-0" />}
             </div>
 
             <div className="flex flex-col gap-2 mt-3 pt-3 border-t border-zinc-100/50">
@@ -244,7 +263,7 @@ const TableOfContents = memo(({
     onPageChange: (idx: number) => void;
 }) => {
     return (
-        <div className="bg-white/60 backdrop-blur-md p-8 rounded-[2rem] border border-zinc-200 h-full flex flex-col shadow-sm overflow-hidden text-zinc-900">
+        <div className="bg-[var(--background-surface)]/60 backdrop-blur-md p-8 rounded-[2rem] border border-[var(--border)] h-full flex flex-col shadow-sm overflow-hidden text-[var(--foreground)]">
             <div className="flex items-center gap-2 mb-8 border-b border-zinc-200 pb-4 shrink-0 px-1">
                 <div className="p-2 bg-zinc-100 rounded-xl">
                     <ListIcon className="w-4 h-4 text-zinc-600" />
@@ -582,7 +601,7 @@ export default function NotebookPage() {
                 {/* Main Content Grid */}
                 <div className="flex-1 flex gap-8 min-h-0 overflow-hidden items-start">
                     {/* Sidebar - Note List */}
-                    <div className="w-72 flex flex-col h-full bg-white/60 backdrop-blur-md rounded-[2rem] border border-zinc-200 shrink-0 shadow-sm overflow-hidden transition-all hover:bg-white/80">
+                    <div className="w-72 flex flex-col h-full bg-[var(--background-surface)]/60 backdrop-blur-md rounded-[2rem] border border-[var(--border)] shrink-0 shadow-sm overflow-hidden transition-all hover:bg-[var(--background-surface)]/80">
                         <div className="p-6 flex flex-col gap-6 h-full">
                             <div className="flex items-center justify-between px-1 border-b border-zinc-100 pb-4">
                                 <div className="flex items-center gap-2">

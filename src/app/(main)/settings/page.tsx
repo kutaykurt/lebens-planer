@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Download, Upload, Trash2, Moon, Sun, Monitor, Shield, Database, Palette, Bell, BellOff, CheckCircle2, Layout, Type, Maximize2, Minimize2, Droplets, GripVertical, Eye, EyeOff, ArrowUp, ArrowDown, Tag as TagIcon, X, Edit2, Check, Plus, Smartphone, Lock, Unlock, Sparkles, UserCircle } from 'lucide-react';
+import { Download, Upload, Trash2, Moon, Sun, Monitor, Shield, Database, Palette, Bell, BellOff, CheckCircle2, Layout, Type, Maximize2, Minimize2, Droplets, GripVertical, Eye, EyeOff, ArrowUp, ArrowDown, Tag as TagIcon, X, Edit2, Check, Plus, Smartphone, Lock, Unlock, Sparkles, UserCircle, Settings } from 'lucide-react';
 import { PageContainer } from '@/components/layout';
 import { Card, Button, Input, Dialog, DialogFooter, toast } from '@/components/ui';
 import { useLifeOSStore, usePreferences, useHydration } from '@/stores';
@@ -193,65 +193,7 @@ function NotificationSection() {
     );
 }
 
-// ─── Gamification Section ───────────────────────────────────────────────────
 
-function GamificationSection() {
-    const preferences = usePreferences();
-    const buyStreakFreeze = useLifeOSStore((s) => s.buyStreakFreeze);
-    const xp = preferences.xp;
-
-    const handleBuyFreeze = () => {
-        const result = buyStreakFreeze();
-        if (result.success) {
-            toast.success('Streak Freeze gekauft! ❄️');
-        } else {
-            toast.error(result.error || 'Fehler beim Kauf');
-        }
-    };
-
-    return (
-        <div className="space-y-4">
-            <Card variant="elevated">
-                <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-cyan-500 shadow-lg shadow-cyan-500/20 flex items-center justify-center">
-                            <Sparkles className="w-6 h-6 text-white" />
-                        </div>
-                        <div>
-                            <h3 className="font-semibold text-[var(--foreground)]">Streak-Schutz</h3>
-                            <p className="text-sm text-[var(--foreground-secondary)]">Kosten: 1.000 XP pro Freeze</p>
-                        </div>
-                    </div>
-                    <div className="text-right">
-                        <p className="text-xs font-black uppercase text-[var(--foreground-muted)] mb-1">Deine XP</p>
-                        <p className="text-xl font-black text-[var(--accent-primary)]">{xp.toLocaleString()}</p>
-                    </div>
-                </div>
-
-                <div className="mt-6 flex items-center justify-between p-4 bg-[var(--background-elevated)] rounded-2xl">
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center">
-                            <Monitor className="w-4 h-4 text-cyan-500" />
-                        </div>
-                        <div>
-                            <p className="text-sm font-bold">Vorrat: {preferences.streakFreezes} Freezes</p>
-                            <p className="text-[10px] text-[var(--foreground-muted)] uppercase font-bold">Maximal 3 gleichzeitig</p>
-                        </div>
-                    </div>
-                    <Button
-                        size="sm"
-                        onClick={handleBuyFreeze}
-                        disabled={xp < 1000 || preferences.streakFreezes >= 3}
-                        className="gap-2"
-                    >
-                        <Plus className="w-4 h-4" />
-                        Kaufen
-                    </Button>
-                </div>
-            </Card>
-        </div>
-    );
-}
 
 function ThemeSelector() {
     const preferences = usePreferences();
@@ -451,107 +393,7 @@ function AppearanceSection() {
     );
 }
 
-// ─── Dashboard Section ───────────────────────────────────────────────────────
 
-function DashboardSection() {
-    const preferences = usePreferences();
-    const updatePreferences = useLifeOSStore((s) => s.updatePreferences);
-
-    const widgetLabels: Record<string, string> = {
-        smart_briefing: 'Smart Briefing (KI-Start)',
-        character_card: 'Charakter-Profil (Level/Skills)',
-        focus_cockpit: 'Focus Cockpit (Pomodoro)',
-        energy_checkin: 'Energie & Stimmung',
-        daily_reflection: 'Tages-Journal',
-        today_tasks: 'Heutige Aufgaben',
-        inbox: 'Inbox (Ungeplant)',
-        habits: 'Gewohnheiten',
-        finance_widget: 'Finanz-Status (Monat)',
-        smart_insight_widget: 'KI-Insights (Pattern Recognition)',
-    };
-
-    const toggleWidget = (id: string) => {
-        updatePreferences({
-            dashboard: {
-                ...preferences.dashboard,
-                widgets: preferences.dashboard.widgets.map(w =>
-                    w.id === id ? { ...w, enabled: !w.enabled } : w
-                )
-            }
-        });
-    };
-
-    const moveWidget = (id: string, direction: 'up' | 'down') => {
-        const widgets = [...preferences.dashboard.widgets].sort((a, b) => a.order - b.order);
-        const index = widgets.findIndex(w => w.id === id);
-
-        if (direction === 'up' && index > 0) {
-            [widgets[index], widgets[index - 1]] = [widgets[index - 1], widgets[index]];
-        } else if (direction === 'down' && index < widgets.length - 1) {
-            [widgets[index], widgets[index + 1]] = [widgets[index + 1], widgets[index]];
-        }
-
-        updatePreferences({
-            dashboard: {
-                ...preferences.dashboard,
-                widgets: widgets.map((w, i) => ({ ...w, order: i }))
-            }
-        });
-    };
-
-    const sortedWidgets = [...preferences.dashboard.widgets].sort((a, b) => a.order - b.order);
-
-    return (
-        <div className="space-y-3">
-            <p className="text-xs font-black uppercase tracking-widest text-[var(--foreground-muted)] mb-3">Sichtbarkeit & Reihenfolge</p>
-            {sortedWidgets.map((widget, index) => (
-                <div
-                    key={widget.id}
-                    className={cn(
-                        "flex items-center gap-4 p-4 rounded-2xl border transition-all",
-                        widget.enabled
-                            ? "bg-[var(--background-surface)] border-[var(--border)]"
-                            : "bg-[var(--background-subtle)] border-transparent opacity-60"
-                    )}
-                >
-                    <div className="flex flex-col gap-1">
-                        <button
-                            onClick={() => moveWidget(widget.id, 'up')}
-                            disabled={index === 0}
-                            className="p-1 hover:bg-[var(--background-elevated)] rounded-md disabled:opacity-20"
-                        >
-                            <ArrowUp className="w-3 h-3" />
-                        </button>
-                        <button
-                            onClick={() => moveWidget(widget.id, 'down')}
-                            disabled={index === sortedWidgets.length - 1}
-                            className="p-1 hover:bg-[var(--background-elevated)] rounded-md disabled:opacity-20"
-                        >
-                            <ArrowDown className="w-3 h-3" />
-                        </button>
-                    </div>
-
-                    <div className="flex-1">
-                        <p className="text-sm font-bold text-[var(--foreground)]">{widgetLabels[widget.id]}</p>
-                    </div>
-
-                    <button
-                        onClick={() => toggleWidget(widget.id)}
-                        className={cn(
-                            "flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all",
-                            widget.enabled
-                                ? "bg-[var(--accent-success-light)] text-[var(--accent-success)]"
-                                : "bg-[var(--background-elevated)] text-[var(--foreground-muted)]"
-                        )}
-                    >
-                        {widget.enabled ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-                        {widget.enabled ? 'Sichtbar' : 'Versteckt'}
-                    </button>
-                </div>
-            ))}
-        </div>
-    );
-}
 
 // ─── Tag Section ────────────────────────────────────────────────────────────
 
@@ -749,48 +591,7 @@ function ExportSection() {
     );
 }
 
-// ─── Import Section ──────────────────────────────────────────────────────────
 
-function ImportSection() {
-    const importData = useLifeOSStore((s) => s.importData);
-
-    const handleImport = () => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.json';
-        input.onchange = async (e) => {
-            const file = (e.target as HTMLInputElement).files?.[0];
-            if (file) {
-                try {
-                    const text = await file.text();
-                    const result = importData(text);
-                    if (result.success) {
-                        toast.success('Daten importiert! 🎉');
-                    } else {
-                        toast.error(`Import fehlgeschlagen: ${result.error}`);
-                    }
-                } catch {
-                    toast.error('Datei konnte nicht gelesen werden');
-                }
-            }
-        };
-        input.click();
-    };
-
-    return (
-        <SettingsCard
-            icon={Upload}
-            iconColor="from-emerald-500 to-teal-500"
-            title="Daten importieren"
-            description="Importiere Daten aus einer Backup-Datei"
-            action={
-                <Button variant="secondary" onClick={handleImport}>
-                    Import
-                </Button>
-            }
-        />
-    );
-}
 
 // ─── Delete All Data ─────────────────────────────────────────────────────────
 
@@ -1041,6 +842,7 @@ function SettingsPageSkeleton() {
 export default function SettingsPage() {
     const [mounted, setMounted] = useState(false);
     const isHydrated = useHydration();
+    const [activeTab, setActiveTab] = useState<'general' | 'appearance' | 'data'>('general');
 
     useEffect(() => {
         setMounted(true);
@@ -1050,124 +852,145 @@ export default function SettingsPage() {
         return <SettingsPageSkeleton />;
     }
 
+    const tabs = [
+        { id: 'general', label: 'Allgemein', icon: UserCircle },
+        { id: 'appearance', label: 'Erscheinungsbild', icon: Palette },
+        { id: 'data', label: 'Daten & System', icon: Database },
+    ];
+
     return (
-        <PageContainer>
-            {/* Header */}
-            <div className="mb-8 animate-fade-in">
-                <h1 className="text-2xl font-bold text-[var(--foreground)] tracking-tight">Einstellungen</h1>
-                <p className="text-[var(--foreground-secondary)] mt-1">
-                    Passe deinen Lebensplaner an deine Bedürfnisse an
-                </p>
-            </div>
+        <PageContainer width="wide">
+            {/* Premium Header */}
+            <div className="relative mb-12 animate-fade-in overflow-hidden rounded-[2.5rem] bg-[var(--background-surface)] border border-[var(--border)] p-12 shadow-xl">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full -mr-32 -mt-32 blur-3xl" />
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full -ml-32 -mb-32 blur-3xl" />
 
-            {/* Profile Section */}
-            <div className="mb-8 animate-fade-in-up">
-                <div className="flex items-center gap-2 mb-4">
-                    <UserCircle className="w-5 h-5 text-[var(--foreground-muted)]" />
-                    <h2 className="font-semibold text-[var(--foreground)]">Benutzerprofil</h2>
-                </div>
-                <ProfileSection />
-            </div>
-
-            {/* Appearance Section */}
-            <div className="mb-8 animate-fade-in-up stagger-1">
-                <div className="flex items-center gap-2 mb-4">
-                    <Layout className="w-5 h-5 text-[var(--foreground-muted)]" />
-                    <h2 className="font-semibold text-[var(--foreground)]">Anpassung</h2>
-                </div>
-                <AppearanceSection />
-            </div>
-
-            {/* Security Section */}
-            <div className="mb-8 animate-fade-in-up stagger-2">
-                <div className="flex items-center gap-2 mb-4">
-                    <Shield className="w-5 h-5 text-[var(--foreground-muted)]" />
-                    <h2 className="font-semibold text-[var(--foreground)]">Sicherheit & Privatsphäre</h2>
-                </div>
-                <SecuritySection />
-            </div>
-
-            {/* Theme & Notifications */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                <div className="animate-fade-in-up stagger-2">
-                    <div className="flex items-center gap-2 mb-4">
-                        <Palette className="w-5 h-5 text-[var(--foreground-muted)]" />
-                        <h2 className="font-semibold text-[var(--foreground)]">Farbgrundton</h2>
+                <div className="relative z-10">
+                    <div className="flex items-center gap-4 mb-3">
+                        <div className="w-12 h-12 rounded-2xl bg-[var(--accent-primary)] flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                            <Settings className="w-6 h-6 text-white" />
+                        </div>
+                        <h1 className="text-4xl font-black text-[var(--foreground)] tracking-tight italic uppercase">Einstellungen</h1>
                     </div>
-                    <ThemeSelector />
+                    <p className="text-[var(--foreground-secondary)] text-lg max-w-2xl font-medium">
+                        Konfiguriere deinen digitalen Lebensraum und passe alles an deine Workflow-Bedürfnisse an.
+                    </p>
                 </div>
+            </div>
 
-                <div className="animate-fade-in-up stagger-3">
-                    <div className="flex items-center gap-2 mb-4">
-                        <Bell className="w-5 h-5 text-[var(--foreground-muted)]" />
-                        <h2 className="font-semibold text-[var(--foreground)]">Benachrichtigungen</h2>
+            {/* Tab Navigation */}
+            <div className="flex gap-2 p-1.5 bg-[var(--background-surface)] border border-[var(--border)] rounded-2xl mb-12 shadow-sm shrink-0 overflow-x-auto no-scrollbar">
+                {tabs.map((tab) => (
+                    <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id as any)}
+                        className={cn(
+                            "flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold uppercase tracking-widest transition-all whitespace-nowrap",
+                            activeTab === tab.id
+                                ? "bg-[var(--accent-primary)] text-white shadow-lg shadow-indigo-500/20 scale-[1.02]"
+                                : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--background-elevated)]"
+                        )}
+                    >
+                        <tab.icon className="w-4 h-4" />
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
+
+            <div className="space-y-12 min-h-[500px]">
+                {/* General Tab */}
+                {activeTab === 'general' && (
+                    <div className="animate-fade-in-up space-y-10">
+                        <section>
+                            <div className="flex items-center gap-3 mb-6">
+                                <UserCircle className="w-6 h-6 text-[var(--accent-primary)]" />
+                                <h2 className="text-xl font-black uppercase italic text-[var(--foreground)]">Benutzerprofil</h2>
+                            </div>
+                            <ProfileSection />
+                        </section>
+
+                        <section>
+                            <div className="flex items-center gap-3 mb-6">
+                                <Shield className="w-6 h-6 text-[var(--accent-primary)]" />
+                                <h2 className="text-xl font-black uppercase italic text-[var(--foreground)]">Sicherheit & Schutz</h2>
+                            </div>
+                            <SecuritySection />
+                        </section>
+
+                        <section>
+                            <div className="flex items-center gap-3 mb-6">
+                                <Bell className="w-6 h-6 text-[var(--accent-primary)]" />
+                                <h2 className="text-xl font-black uppercase italic text-[var(--foreground)]">Benachrichtigungs-Center</h2>
+                            </div>
+                            <NotificationSection />
+                        </section>
                     </div>
-                    <NotificationSection />
-                </div>
-            </div>
+                )}
 
-            {/* Gamification Section */}
-            <div className="mb-8 animate-fade-in-up stagger-3">
-                <div className="flex items-center gap-2 mb-4">
-                    <Sparkles className="w-5 h-5 text-amber-500" />
-                    <h2 className="font-semibold text-[var(--foreground)]">Gamification & Belohnungen</h2>
-                </div>
-                <GamificationSection />
-            </div>
+                {/* Appearance Tab */}
+                {activeTab === 'appearance' && (
+                    <div className="animate-fade-in-up space-y-10">
+                        <section>
+                            <div className="flex items-center gap-3 mb-6">
+                                <Monitor className="w-6 h-6 text-[var(--accent-primary)]" />
+                                <h2 className="text-xl font-black uppercase italic text-[var(--foreground)]">Farbgrundton & Modus</h2>
+                            </div>
+                            <ThemeSelector />
+                        </section>
 
-            {/* Tags Section */}
-            <div className="mb-8 animate-fade-in-up stagger-4">
-                <div className="flex items-center gap-2 mb-4">
-                    <TagIcon className="w-5 h-5 text-[var(--foreground-muted)]" />
-                    <h2 className="font-semibold text-[var(--foreground)]">Tags & Labels</h2>
-                </div>
-                <TagSection />
-            </div>
+                        <section>
+                            <div className="flex items-center gap-3 mb-6">
+                                <Palette className="w-6 h-6 text-[var(--accent-primary)]" />
+                                <h2 className="text-xl font-black uppercase italic text-[var(--foreground)]">Erscheinungsbild Anpassen</h2>
+                            </div>
+                            <AppearanceSection />
+                        </section>
 
-            {/* Dashboard Struktur */}
-            <div className="mb-8 animate-fade-in-up stagger-5">
-                <div className="flex items-center gap-2 mb-4">
-                    <GripVertical className="w-5 h-5 text-[var(--foreground-muted)]" />
-                    <h2 className="font-semibold text-[var(--foreground)]">Dashboard Struktur</h2>
-                </div>
-                <DashboardSection />
-            </div>
+                        <section>
+                            <div className="flex items-center gap-3 mb-6">
+                                <TagIcon className="w-6 h-6 text-[var(--accent-primary)]" />
+                                <h2 className="text-xl font-black uppercase italic text-[var(--foreground)]">Tags & Labels</h2>
+                            </div>
+                            <TagSection />
+                        </section>
+                    </div>
+                )}
 
-            {/* Data Management */}
-            <div className="mb-8 animate-fade-in-up stagger-6">
-                <div className="flex items-center gap-2 mb-4">
-                    <Database className="w-5 h-5 text-[var(--foreground-muted)]" />
-                    <h2 className="font-semibold text-[var(--foreground)]">Datenverwaltung</h2>
-                </div>
-                <ExportSection />
-                <ImportSection />
-            </div>
+                {/* Data Tab */}
+                {activeTab === 'data' && (
+                    <div className="animate-fade-in-up space-y-10">
+                        <section>
+                            <div className="flex items-center gap-3 mb-6">
+                                <Database className="w-6 h-6 text-[var(--accent-primary)]" />
+                                <h2 className="text-xl font-black uppercase italic text-[var(--foreground)]">Datenverwaltung</h2>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <ExportSection />
+                                <InstallPWASection />
+                            </div>
+                        </section>
 
-            {/* App Install */}
-            <div className="mb-8 animate-fade-in-up stagger-7">
-                <div className="flex items-center gap-2 mb-4">
-                    <Smartphone className="w-5 h-5 text-[var(--foreground-muted)]" />
-                    <h2 className="font-semibold text-[var(--foreground)]">App & System</h2>
-                </div>
-                <InstallPWASection />
-            </div>
-
-            {/* Danger Zone */}
-            <div className="animate-fade-in-up stagger-7">
-                <div className="flex items-center gap-2 mb-4">
-                    <Shield className="w-5 h-5 text-[var(--accent-error)]" />
-                    <h2 className="font-semibold text-[var(--accent-error)]">Gefahrenzone</h2>
-                </div>
-                <DeleteDataSection />
+                        <section className="pt-8 border-t border-red-500/10">
+                            <div className="flex items-center gap-3 mb-6">
+                                <Shield className="w-6 h-6 text-[var(--accent-error)]" />
+                                <h2 className="text-xl font-black uppercase italic text-[var(--accent-error)]">Gefahrenzone</h2>
+                            </div>
+                            <DeleteDataSection />
+                        </section>
+                    </div>
+                )}
             </div>
 
             {/* Version Info */}
-            <div className="mt-12 text-center animate-fade-in-up stagger-4">
-                <div className="inline-flex flex-col items-center gap-1 px-6 py-4 rounded-2xl bg-[var(--background-surface)] border border-[var(--border)]">
-                    <p className="text-sm font-medium text-[var(--foreground)]">Lebensplaner</p>
-                    <p className="text-xs text-[var(--foreground-muted)]">Version 1.0.0</p>
-                    <p className="text-xs text-[var(--foreground-muted)] mt-2">
-                        Made with 💜 by Kutay Kurt
+            <div className="mt-20 text-center animate-fade-in-up">
+                <div className="inline-flex flex-col items-center gap-1">
+                    <div className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.2em] text-[var(--foreground-muted)]">
+                        <span>Life OS</span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)]" />
+                        <span>v1.2.0</span>
+                    </div>
+                    <p className="text-[10px] text-[var(--foreground-subtle)] font-bold uppercase tracking-wider mt-2">
+                        Designed for high performance & mental clarity
                     </p>
                 </div>
             </div>
