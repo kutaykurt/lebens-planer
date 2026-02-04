@@ -9,20 +9,26 @@ export default function HomePage() {
   const isHydrated = useHydration();
   const hasCompletedOnboarding = useHasCompletedOnboarding();
   const [isLoading, setIsLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (isHydrated) {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isHydrated && mounted) {
       if (hasCompletedOnboarding) {
-        router.replace('/dashboard');
+        router.replace('/today');
       } else {
         router.replace('/onboarding');
       }
       setIsLoading(false);
     }
-  }, [isHydrated, hasCompletedOnboarding, router]);
+  }, [isHydrated, hasCompletedOnboarding, router, mounted]);
 
   // Loading state while hydrating
-  if (isLoading) {
+  // Use a consistent render for both server and initial client pass
+  if (!mounted || isLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-[var(--background)]">
         <div className="text-5xl animate-bounce">🌱</div>

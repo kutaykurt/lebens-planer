@@ -1,10 +1,10 @@
 /**
- * Life OS Service Worker
+ * Lebensplaner Service Worker
  * Handles background notifications and offline caching.
  */
 
-const CACHE_NAME = 'life-os-v2';
-const DYNAMIC_CACHE = 'life-os-dynamic-v2';
+const CACHE_NAME = 'lebensplaner-v2';
+const DYNAMIC_CACHE = 'lebensplaner-dynamic-v2';
 
 // Assets to strictly precache (if static)
 const PRECACHE_URLS = [
@@ -126,7 +126,7 @@ self.addEventListener('notificationclick', (event) => {
 
 // Basic push listener (if server push is ever added)
 self.addEventListener('push', (event) => {
-    const data = event.data ? event.data.json() : { title: 'Life OS Update', message: 'Neuigkeiten in deinem Life OS!' };
+    const data = event.data ? event.data.json() : { title: 'Lebensplaner Update', message: 'Neuigkeiten in deinem Lebensplaner!' };
 
     const options = {
         body: data.message,

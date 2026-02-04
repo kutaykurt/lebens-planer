@@ -282,7 +282,7 @@ export default function NotebookPage() {
 
     // Sort and filter notes
     const filteredNotes = useMemo(() => {
-        let result = [...notes].filter(n => n.title !== 'Notebook_Main');
+        let result = [...notes].filter(n => n.title !== 'Notebook_Main' && n.type === 'notebook');
 
         if (searchQuery) {
             result = result.filter(n =>
@@ -339,10 +339,11 @@ export default function NotebookPage() {
         const id = addNote({
             title: 'Unbenannte Notiz',
             content: '',
+            type: 'notebook',
             pages: [''],
             tagIds: [],
             isPinned: false
-        } as any);
+        });
         setSelectedNoteId(id);
         return id;
     };
@@ -356,6 +357,7 @@ export default function NotebookPage() {
         // Save immediately
         updateNote(selectedNoteId, {
             title: localTitle || 'Unbenannte Notiz',
+            type: 'notebook',
             pages: localPages,
             content: localPages.join('\n\n')
         });
@@ -367,6 +369,7 @@ export default function NotebookPage() {
             if (selectedNoteId && localPages.length > 0) {
                 updateNote(selectedNoteId, {
                     title: localTitle || 'Unbenannte Notiz',
+                    type: 'notebook',
                     pages: localPages,
                     content: localPages.join('\n\n')
                 });
@@ -381,6 +384,7 @@ export default function NotebookPage() {
         if (selectedNoteId) {
             updateNote(selectedNoteId, {
                 title: localTitle || 'Unbenannte Notiz',
+                type: 'notebook',
                 pages: localPages,
                 content: localPages.join('\n\n')
             });

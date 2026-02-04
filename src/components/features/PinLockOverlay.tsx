@@ -96,7 +96,7 @@ export function PinLockOverlay() {
                     </div>
 
                     <div className="text-center">
-                        <h2 className="text-2xl font-bold mb-2">Life OS gesperrt</h2>
+                        <h2 className="text-2xl font-bold mb-2">Lebensplaner gesperrt</h2>
                         <p className="text-[var(--foreground-muted)]">Bitte PIN eingeben</p>
                     </div>
 

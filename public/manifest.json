@@ -1,6 +1,6 @@
 {
-    "name": "Life OS",
-    "short_name": "LifeOS",
+    "name": "Lebensplaner",
+    "short_name": "Lebensplaner",
     "description": "Persönliches Lebens-Management-System – privat, offline, ohne Überforderung",
     "start_url": "/",
     "display": "standalone",

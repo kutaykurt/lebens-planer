@@ -1,5 +1,5 @@
 /**
- * Notification Service for Life OS
+ * Notification Service for Lebensplaner
  * Handles browser notification permissions and sending local notifications.
  */
 

@@ -258,7 +258,7 @@ export default function SocialPage() {
                     </div>
                     <h3 className="text-xl font-bold mb-2 tracking-tight uppercase">Keine Kontakte gefunden</h3>
                     <p className="text-[var(--foreground-muted)] mb-8 text-center max-w-[300px]">
-                        Beginne damit, deine ersten Mitstreiter in dein Life OS aufzunehmen.
+                        Beginne damit, deine ersten Mitstreiter in deinen Lebensplaner aufzunehmen.
                     </p>
                     <Button
                         onClick={() => setIsAddDialogOpen(true)}

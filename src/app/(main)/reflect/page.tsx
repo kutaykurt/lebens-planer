@@ -160,7 +160,7 @@ function ReflectionDialog({
     const steps = [
         { title: 'Zufriedenheit', subtitle: 'Wie bewertest du diese Woche?' },
         { title: 'Erfolge', subtitle: 'Was lief gut?' },
-        { title: 'Herausforderungen', subtitle: 'Was war schwierig?' },
+        { title: 'Hürden', subtitle: 'Was war schwierig?' },
         { title: 'Fokus', subtitle: 'Dein Fokus für nächste Woche' },
     ];
 
@@ -186,7 +186,7 @@ function ReflectionDialog({
             case 3:
                 return (
                     <Textarea
-                        label="Was war herausfordernd?"
+                        label="Was waren deine Hürden?"
                         value={challenges}
                         onChange={(e) => setChallenges(e.target.value)}
                         placeholder="Womit hast du gekämpft? Was hat nicht funktioniert?"

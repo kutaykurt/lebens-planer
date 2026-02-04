@@ -137,7 +137,7 @@ function MonthlyReviewDialog({
                     />
 
                     <Textarea
-                        label="Herausforderungen"
+                        label="Hürden & Schwierigkeiten"
                         value={challenges}
                         onChange={(e) => setChallenges(e.target.value)}
                         placeholder="Was lief nicht so gut?"
@@ -282,7 +282,7 @@ function YearlyReviewDialog({
                     />
 
                     <Textarea
-                        label="Herausforderungen"
+                        label="Hürden & Schwierigkeiten"
                         value={challenges}
                         onChange={(e) => setChallenges(e.target.value)}
                         placeholder="Was war schwierig?"

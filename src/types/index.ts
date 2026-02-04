@@ -1,5 +1,5 @@
 // ============================================
-// LIFE OS - Type Definitions
+// LEBENSPLANER - Type Definitions
 // ============================================
 
 // ─── Tag ─────────────────────────────────────────────────────────────────────
@@ -520,6 +520,7 @@ export interface Note {
   id: string;
   title: string;
   content: string; // Markdown supported
+  type?: 'wiki' | 'notebook';
   pages?: string[]; // Multiple pages support
   tagIds: string[];
   projectId?: string;

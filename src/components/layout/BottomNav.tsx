@@ -6,12 +6,10 @@ import { Home, Rocket, Calendar, Wallet, Brain, Activity, LayoutGrid, Users, Tro
 import { cn } from '@/lib/utils';
 
 const navItems = [
-    { href: '/dashboard', label: 'Übersicht', icon: Home },
+    { href: '/today', label: 'Heute', icon: Home },
+    { href: '/goals', label: 'Ziele', icon: Rocket },
     { href: '/finance', label: 'Finanzen', icon: Wallet },
-    { href: '/wiki', label: 'Wiki', icon: Brain },
-    { href: '/notebook', label: 'Notiz', icon: PenTool },
-    { href: '/analytics', label: 'Analytik', icon: Activity },
-    { href: '/challenges', label: 'Herausforderungen', icon: Trophy },
+    { href: '/notebook', label: 'Notizen', icon: PenTool },
     { href: '/pixels', label: 'Stimmung', icon: LayoutGrid },
 ];
 

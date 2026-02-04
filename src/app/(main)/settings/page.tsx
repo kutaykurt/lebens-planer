@@ -1,13 +1,67 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Download, Upload, Trash2, Moon, Sun, Monitor, Shield, Database, Palette, Bell, BellOff, CheckCircle2, Layout, Type, Maximize2, Minimize2, Droplets, GripVertical, Eye, EyeOff, ArrowUp, ArrowDown, Tag as TagIcon, X, Edit2, Check, Plus, Smartphone, Lock, Unlock, Sparkles } from 'lucide-react';
+import { Download, Upload, Trash2, Moon, Sun, Monitor, Shield, Database, Palette, Bell, BellOff, CheckCircle2, Layout, Type, Maximize2, Minimize2, Droplets, GripVertical, Eye, EyeOff, ArrowUp, ArrowDown, Tag as TagIcon, X, Edit2, Check, Plus, Smartphone, Lock, Unlock, Sparkles, UserCircle } from 'lucide-react';
 import { PageContainer } from '@/components/layout';
-import { Card, Button, Dialog, DialogFooter, toast } from '@/components/ui';
+import { Card, Button, Input, Dialog, DialogFooter, toast } from '@/components/ui';
 import { useLifeOSStore, usePreferences, useHydration } from '@/stores';
 import { downloadFile, getCurrentTimestamp, cn } from '@/lib/utils';
 import { NotificationService } from '@/lib/notifications';
 import type { ThemeMode } from '@/types';
+
+// ─── Profile Section ────────────────────────────────────────────────────────
+
+function ProfileSection() {
+    const preferences = usePreferences();
+    const updatePreferences = useLifeOSStore((s) => s.updatePreferences);
+    const [name, setName] = useState(preferences.name);
+    const [isEditing, setIsEditing] = useState(false);
+
+    const handleSave = () => {
+        if (name.trim()) {
+            updatePreferences({ name: name.trim() });
+            setIsEditing(false);
+            toast.success('Name aktualisiert! 👋');
+        }
+    };
+
+    return (
+        <Card variant="elevated" className="mb-4">
+            <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shrink-0 shadow-lg shadow-indigo-500/20">
+                    <UserCircle className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-[var(--foreground)]">Dein Profil</h3>
+                    {isEditing ? (
+                        <div className="mt-2 flex flex-col sm:flex-row gap-2">
+                            <Input
+                                value={name}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+                                className="h-9 text-sm focus:ring-2 focus:ring-indigo-500/20"
+                                autoFocus
+                                onKeyDown={(e: React.KeyboardEvent) => e.key === 'Enter' && handleSave()}
+                            />
+                            <div className="flex gap-2">
+                                <Button size="sm" onClick={handleSave} className="flex-1 sm:flex-none">Speichern</Button>
+                                <Button size="sm" variant="ghost" onClick={() => { setName(preferences.name); setIsEditing(false); }} className="flex-1 sm:flex-none">Abbrechen</Button>
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="text-sm text-[var(--foreground-secondary)]">
+                            Eingestellt auf: <span className="font-bold text-[var(--foreground)]">{preferences.name}</span>
+                        </p>
+                    )}
+                </div>
+                {!isEditing && (
+                    <Button variant="secondary" size="sm" onClick={() => setIsEditing(true)}>
+                        Ändern
+                    </Button>
+                )}
+            </div>
+        </Card>
+    );
+}
 
 // ─── Notification Section ───────────────────────────────────────────────────
 
@@ -36,7 +90,7 @@ function NotificationSection() {
             updatePreferences({ notifications: { ...currentNotifs, enabled: true } });
 
             // Send test notification
-            NotificationService.send('Life OS ist bereit!', {
+            NotificationService.send('Lebensplaner ist bereit!', {
                 body: 'Du erhältst jetzt wichtige Updates und Erinnerungen.',
             });
         } else if (result === 'denied') {
@@ -85,7 +139,7 @@ function NotificationSection() {
                     <div className="flex-1">
                         <h3 className="font-semibold text-[var(--foreground)]">System-Benachrichtigungen</h3>
                         <p className="text-sm text-[var(--foreground-secondary)]">
-                            {permission === 'granted' ? 'Berechtigung erteilt' : 'Erlaube Life OS dir Hinweise zu senden'}
+                            {permission === 'granted' ? 'Berechtigung erteilt' : 'Erlaube Lebensplaner dir Hinweise zu senden'}
                         </p>
                     </div>
                     {permission !== 'granted' ? (
@@ -676,7 +730,7 @@ function ExportSection() {
     const handleExport = () => {
         const data = exportAllData();
         const timestamp = getCurrentTimestamp().replace(/[:.]/g, '-');
-        downloadFile(data, `life-os-export-${timestamp}.json`, 'application/json');
+        downloadFile(data, `lebensplaner-export-${timestamp}.json`, 'application/json');
         toast.success('Daten exportiert! 📥');
     };
 
@@ -837,7 +891,7 @@ function InstallPWASection() {
                 <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-[var(--foreground)]">App installieren</h3>
                     <p className="text-sm text-[var(--foreground-secondary)]">
-                        Installiere Life OS für die beste Erfahrung (Offline-Modus, Fullscreen)
+                        Installiere den Lebensplaner für die beste Erfahrung (Offline-Modus, Fullscreen)
                     </p>
                 </div>
                 <Button onClick={handleInstall} disabled={!deferredPrompt} className="gap-2">
@@ -1002,8 +1056,17 @@ export default function SettingsPage() {
             <div className="mb-8 animate-fade-in">
                 <h1 className="text-2xl font-bold text-[var(--foreground)] tracking-tight">Einstellungen</h1>
                 <p className="text-[var(--foreground-secondary)] mt-1">
-                    Passe Life OS an deine Bedürfnisse an
+                    Passe deinen Lebensplaner an deine Bedürfnisse an
                 </p>
+            </div>
+
+            {/* Profile Section */}
+            <div className="mb-8 animate-fade-in-up">
+                <div className="flex items-center gap-2 mb-4">
+                    <UserCircle className="w-5 h-5 text-[var(--foreground-muted)]" />
+                    <h2 className="font-semibold text-[var(--foreground)]">Benutzerprofil</h2>
+                </div>
+                <ProfileSection />
             </div>
 
             {/* Appearance Section */}
@@ -1101,7 +1164,7 @@ export default function SettingsPage() {
             {/* Version Info */}
             <div className="mt-12 text-center animate-fade-in-up stagger-4">
                 <div className="inline-flex flex-col items-center gap-1 px-6 py-4 rounded-2xl bg-[var(--background-surface)] border border-[var(--border)]">
-                    <p className="text-sm font-medium text-[var(--foreground)]">Life OS</p>
+                    <p className="text-sm font-medium text-[var(--foreground)]">Lebensplaner</p>
                     <p className="text-xs text-[var(--foreground-muted)]">Version 1.0.0</p>
                     <p className="text-xs text-[var(--foreground-muted)] mt-2">
                         Made with 💜 by Kutay Kurt
