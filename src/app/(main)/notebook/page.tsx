@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, memo, useRef } from 'react';
+import { useState, useEffect, useMemo, memo, useRef, useCallback } from 'react';
 import { PageContainer } from '@/components/layout';
 import { useLifeOSStore, useHydration } from '@/stores';
 import { cn } from '@/lib/utils';
@@ -15,113 +15,144 @@ import { toast } from '@/components/ui/Toast';
 
 const NotebookStyles = () => (
     <style jsx global>{`
-        .notebook-paper {
-            background-color: #fcfaf2 !important;
-            background-image: linear-gradient(#e5e7eb 1px, transparent 1px) !important;
-            background-size: 100% 32px !important;
-            line-height: 32px !important;
-            padding-top: 0px !important;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Caveat:wght@400..700&family=Patrick+Hand&family=Special+Elite&family=Indie+Flower&family=Shadows+Into+Light&family=Architects+Daughter&family=Gloria+Hallelujah&family=Coming+Soon&family=Kalam:wght@300;400;700&display=swap');
 
-        .notebook-shadow {
-            box-shadow: 
-                0 1px 1px rgba(0,0,0,0.1), 
-                0 10px 0 -5px #fcfaf2, 
-                0 10px 1px -4px rgba(0,0,0,0.1), 
-                0 20px 0 -10px #fcfaf2, 
-                0 20px 1px -9px rgba(0,0,0,0.1) !important;
-        }
-
-        .notebook-font {
-            font-family: 'EB Garamond', serif;
-            font-size: 19px;
-        }
-
-        .notebook-editor-content .ProseMirror {
-            min-height: 75vh;
-            outline: none;
-            padding-top: 2px;
-            padding-left: 77px !important;
-            padding-right: 2px;
-            caret-color: #000 !important;
-            caret-shape: bar !important;
-        }
-
-        /* Ensure caret is always visible */
-        .notebook-editor-content .ProseMirror:focus {
-            caret-color: #000 !important;
-        }
-
-        .notebook-editor-content .ProseMirror p {
+        /* ═══════════════════════════════════════════════════════════════════════
+           NOTEBOOK PAPER STYLES
+           ═══════════════════════════════════════════════════════════════════════ */
+        
+        .notebook-paper-container {
+            width: 700px;
+            height: 880px; /* 26 Zeilen × 32px = 832px + 48px für Seitenzahl */
             position: relative;
-            margin: 0 !important;
-            padding-left: 1px;
-            line-height: 32px !important;
-            min-height: 32px !important;
+            overflow: hidden !important;
+            background-color: #fcfaf2;
+            background-image: linear-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 100% 32px;
+            border-radius: 1.5rem;
+            border: 1px solid #e5e7eb;
+            box-shadow: 
+                0 1px 1px rgba(0,0,0,0.08), 
+                0 8px 0 -4px #fcfaf2, 
+                0 8px 1px -3px rgba(0,0,0,0.08), 
+                0 16px 0 -8px #fcfaf2, 
+                0 16px 1px -7px rgba(0,0,0,0.08);
+            flex-shrink: 0;
         }
 
-        .notebook-editor-content .ProseMirror h2 {
-            font-size: 24px !important;
+        .notebook-editor-container {
+            position: absolute;
+            top: 0;
+            left: 56px;
+            right: 16px;
+            height: 832px; /* 26 Zeilen × 32px */
+            overflow: hidden !important;
+            padding-top: 0;
+        }
+
+        .notebook-editor-prose {
+            font-family: 'EB Garamond', serif;
+            font-size: 18px;
+            line-height: 32px;
+            color: #1a1a1a;
+            caret-color: #000;
+            outline: none;
+            overflow: hidden !important;
+            height: 100%;
+        }
+
+        .notebook-editor-prose .ProseMirror {
+            outline: none !important;
+            min-height: 100%;
+        }
+
+        .notebook-editor-prose p {
+            margin: 0 !important;
+            padding: 0;
+            min-height: 32px;
+            line-height: 32px !important;
+        }
+
+        .notebook-editor-prose h2 {
+            font-size: 22px !important;
             font-weight: 700 !important;
             line-height: 32px !important;
             margin: 0 !important;
             color: #333;
         }
-        
-        /* Tab character styling - fixed 40px tab width */
-        .notebook-editor-content .ProseMirror .tab-char,
-        .notebook-editor-content .ProseMirror span[data-tab] {
-            display: inline-block;
-            min-width: 8px;
-            width: 40px;
-            background: transparent;
+
+        .notebook-editor-prose ul,
+        .notebook-editor-prose ol {
+            margin: 0 !important;
+            padding-left: 1.5rem !important;
         }
 
-        /* Placeholder style */
-        .notebook-editor-content .ProseMirror p.is-empty:first-child::before {
+        .notebook-editor-prose li {
+            line-height: 32px !important;
+            min-height: 32px;
+        }
+
+        .notebook-editor-prose .tab-char {
+            display: inline-block;
+            width: 40px;
+        }
+
+        /* Placeholder */
+        .notebook-editor-prose p.is-empty:first-child::before {
             content: attr(data-placeholder);
-            position: absolute;
-            left: 12px;
             color: #94a3b8;
             pointer-events: none;
             font-style: italic;
-            opacity: 0.6;
-            height: 32px;
+            opacity: 0.5;
+        }
+
+        /* Spiralbindung */
+        .notebook-spiral {
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 18px;
             display: flex;
-            align-items: center;
-            transition: opacity 0.1s ease;
+            flex-direction: column;
+            justify-content: space-around;
+            padding: 20px 0;
+            pointer-events: none;
+            z-index: 10;
         }
 
-        /* Hide placeholder on focus */
-        .notebook-editor-content .ProseMirror-focused p.is-empty:first-child::before {
-            opacity: 0;
-            display: none;
+        .notebook-spiral-hole {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d1d5db 0%, #f3f4f6 100%);
+            border: 1px solid #9ca3af;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
         }
 
-        /* List Styling */
-        .notebook-editor-content .ProseMirror ul {
-            list-style-type: disc !important;
-            padding-left: 1.5rem !important;
-            margin-top: 0.5rem !important;
-            margin-bottom: 0.5rem !important;
+        /* Roter Randstrich */
+        .notebook-margin-line {
+            position: absolute;
+            left: 48px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background-color: #fca5a5;
+            pointer-events: none;
+            z-index: 5;
         }
 
-        .notebook-editor-content .ProseMirror ol {
-            list-style-type: decimal !important;
-            padding-left: 1.5rem !important;
-            margin-top: 0.5rem !important;
-            margin-bottom: 0.5rem !important;
-        }
-
-        .notebook-editor-content .ProseMirror li {
-            position: relative;
-            line-height: 32px !important;
-        }
-
-        .notebook-editor-content .ProseMirror li p {
-            display: inline-block !important;
-            margin: 0 !important;
-            padding: 0 !important;
+        /* Seitenzahl unten rechts */
+        .notebook-page-number {
+            position: absolute;
+            bottom: 12px;
+            right: 20px;
+            font-family: 'EB Garamond', serif;
+            font-size: 14px;
+            font-style: italic;
+            color: #9ca3af;
+            pointer-events: none;
+            z-index: 10;
         }
     `}</style>
 );
@@ -279,6 +310,7 @@ export default function NotebookPage() {
     // Multi-page state
     const [currentPageIndex, setCurrentPageIndex] = useState(0);
     const [localPages, setLocalPages] = useState<string[]>(['']);
+    const [focusPos, setFocusPos] = useState<'start' | 'end'>('end');
 
     // Sort and filter notes
     const filteredNotes = useMemo(() => {
@@ -393,8 +425,38 @@ export default function NotebookPage() {
     };
 
     const handlePageChange = (index: number) => {
+        setFocusPos('start');
         setCurrentPageIndex(index);
     };
+
+    const handlePageFull = useCallback((overflowContent?: string) => {
+        const nextPageIndex = currentPageIndex + 1;
+
+        // Wenn wir Inhalt mitnehmen, Cursor ans Ende des mitgenommenen Teils setzen
+        setFocusPos(overflowContent ? 'end' : 'start');
+
+        if (nextPageIndex < localPages.length) {
+            // Seite existiert bereits -> Vorne anhängen
+            const newPages = [...localPages];
+            if (overflowContent) {
+                newPages[nextPageIndex] = overflowContent + newPages[nextPageIndex];
+            }
+            setLocalPages(newPages);
+            setCurrentPageIndex(nextPageIndex);
+        } else {
+            // Neue Seite anlegen
+            const newPages = [...localPages, overflowContent || ''];
+            setLocalPages(newPages);
+            setCurrentPageIndex(nextPageIndex);
+        }
+    }, [localPages, currentPageIndex]);
+
+    const handleBackspaceAtStart = useCallback(() => {
+        if (currentPageIndex > 0) {
+            setFocusPos('end');
+            setCurrentPageIndex(currentPageIndex - 1);
+        }
+    }, [currentPageIndex]);
 
     const handleAddPage = () => {
         const newPages = [...localPages, ''];
@@ -440,6 +502,7 @@ export default function NotebookPage() {
     const togglePin = (id: string, current: boolean) => {
         updateNote(id, { isPinned: !current });
     };
+
 
     // Table of Contents logic
     const tableOfContents = useMemo(() => {
@@ -563,31 +626,41 @@ export default function NotebookPage() {
                     </div>
 
                     {/* Central Editor Area */}
-                    <div className="flex-1 flex flex-col h-full overflow-visible gap-4 relative z-[100]">
+                    <div className="flex-1 flex flex-col h-full overflow-visible gap-4 relative z-0">
                         <div className="shrink-0 relative z-50">
                             <NotebookToolbar editor={editor} />
                         </div>
                         {activeNote ? (
-                            <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar">
-                                <div className="relative notebook-paper notebook-shadow rounded-[2rem] min-h-[85vh] border border-zinc-200 mb-20 overflow-hidden bg-white">
-                                    {/* Spiral binding effect */}
-                                    <div className="absolute left-4 top-0 bottom-0 flex flex-col justify-around py-6 pointer-events-none z-10">
-                                        {Array.from({ length: 18 }).map((_, i) => (
-                                            <div key={i} className="w-5 h-5 rounded-full bg-gradient-to-br from-zinc-300 to-zinc-100 border border-zinc-400 shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]" />
+                            <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar flex justify-center">
+                                <div className="notebook-paper-container mb-20">
+                                    {/* Spiralbindung */}
+                                    <div className="notebook-spiral">
+                                        {Array.from({ length: 22 }).map((_, i) => (
+                                            <div key={i} className="notebook-spiral-hole" />
                                         ))}
                                     </div>
 
-                                    {/* Vertical line */}
-                                    <div className="absolute left-[80px] top-0 bottom-0 w-px bg-rose-200" />
+                                    {/* Roter Randstrich */}
+                                    <div className="notebook-margin-line" />
 
-                                    <div className="px-2">
+                                    {/* Editor Container */}
+                                    <div className="notebook-editor-container">
                                         <NotebookEditor
                                             key={`${selectedNoteId}-${currentPageIndex}`}
                                             content={localPages[currentPageIndex]}
                                             onChange={updateCurrentPageContent}
                                             onEditorReady={setEditor}
-                                            placeholder="Datum, Titel, Name"
+                                            placeholder="Schreibe hier..."
+                                            onPageFull={handlePageFull}
+                                            onBackspaceAtStart={handleBackspaceAtStart}
+                                            maxLines={26}
+                                            focusPos={focusPos}
                                         />
+                                    </div>
+
+                                    {/* Seitenzahl unten rechts */}
+                                    <div className="notebook-page-number">
+                                        Seite {currentPageIndex + 1}
                                     </div>
                                 </div>
                             </div>
